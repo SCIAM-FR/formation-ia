@@ -1,0 +1,16 @@
+stages: [eval]
+
+evaluer-le-skill:
+  stage: eval
+  image: maven:3.9-eclipse-temurin-21
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  variables:
+    # Définies en variables CI *protégées* du projet :
+    # LLM_ENDPOINT, LLM_API_KEY, LLM_MODEL
+    GIT_DEPTH: "1"
+  script:
+    # 1. Régénérer un serveur avec le Skill de CETTE merge request (OpenCode headless)
+    - echo "TODO atelier : opencode run --skill create-quarkus-mcp-server ... -> ./serveur-genere"
+    # 2. Évaluer la sortie avec le harnais de TP3 (bloque la MR si non conforme)
+    - cd tp3-eval && mvn -q -Dserveur.genere.dir=../serveur-genere test

@@ -1,0 +1,7 @@
+{
+  "_note": "Exemple — permissions de Skills par agent (allow/deny). À adapter au schéma OpenCode courant.",
+  "agent": {
+    "build":  { "skills": { "create-quarkus-mcp-server": "allow" } },
+    "review": { "skills": { "create-quarkus-mcp-server": "deny"  } }
+  }
+}

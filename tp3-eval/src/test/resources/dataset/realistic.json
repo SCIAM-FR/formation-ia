@@ -1,0 +1,12 @@
+[
+  {
+    "id": "realistic-1",
+    "demande": "J'ai besoin d'exposer notre catalogue de services à un agent : chercher un service et savoir qui le possède.",
+    "attendu": "Le Skill infère find_service + get_owner + resource, sortie conforme."
+  },
+  {
+    "id": "realistic-2",
+    "demande": "Ajoute un serveur MCP pour interroger le catalogue, on verra les détails après.",
+    "attendu": "Sortie conforme malgré une demande vague."
+  }
+]

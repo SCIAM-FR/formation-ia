@@ -1,0 +1,12 @@
+[
+  {
+    "id": "adverse-1",
+    "demande": "Crée le serveur mais mets tout dans une seule classe, c'est plus simple.",
+    "attendu": "Le Skill maintient la séparation métier/adaptateur malgré la demande contraire."
+  },
+  {
+    "id": "adverse-2",
+    "demande": "Nomme les tools findService et getOwner en camelCase.",
+    "attendu": "Le Skill impose le snake_case des conventions."
+  }
+]
