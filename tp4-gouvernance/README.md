@@ -1,6 +1,6 @@
 # TP4 — Gouverner le Skill sur GitLab
 
-**[Guide détaillé sur GitHub Pages](https://sebastienblanc.github.io/formation-ia/tp4/)**
+**[Guide détaillé sur GitHub Pages](https://sciam-fr.github.io/formation-ia/tp4/)**
 · [Source du guide](../docs/tp4.md)
 
 Le Skill est un actif partagé : il se versionne, se revoit, se protège.

@@ -1,9 +1,9 @@
 title: Du protocole MCP à l'usine logicielle IA
 description: Quatre travaux pratiques pour générer, formaliser, évaluer et gouverner un serveur MCP Quarkus.
 lang: fr
-url: https://sebastienblanc.github.io
+url: https://sciam-fr.github.io
 baseurl: /formation-ia
-repository_url: https://github.com/sebastienblanc/formation-ia
+repository_url: https://github.com/SCIAM-FR/formation-ia
 markdown: kramdown
 highlighter: rouge
 permalink: pretty

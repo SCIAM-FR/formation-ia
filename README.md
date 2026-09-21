@@ -6,7 +6,7 @@ puis on le **gouverne**.
 
 ## Guides pas à pas
 
-Le site **[Guides des TP](https://sebastienblanc.github.io/formation-ia/)** propose
+Le site **[Guides des TP](https://sciam-fr.github.io/formation-ia/)** propose
 une préparation du poste et des instructions détaillées pour chaque exercice :
 commandes, résultats attendus, points de contrôle, livrables et dépannage.
 Il sera accessible après activation de GitHub Pages et premier déploiement.

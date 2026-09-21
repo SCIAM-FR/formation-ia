@@ -33,7 +33,7 @@ si nécessaire.
 Si vous n'avez pas encore de clone :
 
 ```bash
-git clone https://github.com/sebastienblanc/formation-ia.git
+git clone https://github.com/SCIAM-FR/formation-ia.git
 cd formation-ia
 ```
 
