@@ -8,6 +8,43 @@ next_url: /tp1/
 next_title: TP1 — Générer
 ---
 
+## Avant la formation — checklist du formateur
+
+La cible de **14 h hors pauses**, dont **6 h 30 de TP essentiels**, suppose cette
+préparation faite **avant la séance**, et non pendant les 15 minutes d'accueil.
+Les participants y vérifient leurs accès ; ils n'y installent pas toute la chaîne.
+
+| À prévalider par le formateur | Preuve attendue avant la séance |
+| --- | --- |
+| Postes, JDK/Maven, dépendances et inspection MCP | Build, démarrage et appels MCP sur l'environnement d'atelier ; dépendances accessibles |
+| OpenCode et modèle de génération autorisé | Version fixée, authentification et réponse réelle ; profil vanilla sans Skill préchargé |
+| Fournisseur du juge TP3 | Endpoint Chat Completions, modèle, clé et quota autorisés ; appel réel avec JSON exploitable par le client Java |
+| Projet GitLab, comptes et offre | Accès participants, droits de protection de `main`, possibilités de revue CODEOWNERS identifiées |
+| Runner et environnement OpenCode | Job de MR exécuté dans un environnement isolé ; Java/Maven et OpenCode disponibles |
+| Modèles et secrets CI autorisés | Génération et juge accessibles dans le contexte de MR de confiance retenu, sans exposer les clés aux contributions non fiables |
+| Chaîne de génération TP4 | Génération neuve depuis le Skill du checkout de la MR, preuve de chargement, build et évaluation réels ; échec bloquant et rapports conservés |
+
+Le dépôt livre un **template de CI avec un `echo` TODO**, pas une CI clé en main.
+Le formateur adapte et éprouve la plomberie des
+[sections 3 et 4 du TP4]({{ '/tp4/' | relative_url }})
+avant la formation. Il prépare l'infrastructure, sans faire à la place des
+participants la rédaction du Skill, des assertions ou de la grille. La CI de
+séance devra utiliser **leurs versions** issues de la MR, pas un serveur préfabriqué.
+
+**Si un accès manque :** rétablissez-le et allongez l'atelier, ou organisez une
+démonstration sur un environnement autorisé en indiquant ce que les participants
+n'ont pas pu vérifier. Sans juge, les assertions peuvent avancer, mais TP3 reste
+**partiel et non validé** tant que le verdict n'a pas été calibré avec une lecture
+humaine. Sans génération réelle ou sans preuve de blocage GitLab, TP4 reste partiel.
+Ne remplacez pas ces preuves par un statut vert, un `echo` ou des tests désactivés.
+
+## Périmètre de préparation
+
+| Parcours | Sections | Preuve de sortie |
+| --- | --- | --- |
+| Essentiel, avant séance puis vérification à l'accueil | Checklist formateur ; sections 1 à 4 | Accès opérationnels, appel modèle réel, chemins isolés, juge et CI prévalidés |
+| Approfondissement / parcours autonome, hors 14 h | Installation et configuration depuis zéro, notamment TP4 sections 3 et 4 | Même chaîne réellement exécutée ; temps supplémentaire à prévoir |
+
 ## 1. Vérifier les prérequis
 
 | Outil ou accès | Vérification | Résultat attendu |
@@ -17,6 +54,7 @@ next_title: TP1 — Générer
 | Maven | `mvn -version` | Maven disponible et utilisant le bon JDK |
 | OpenCode | `opencode --version` | Le CLI répond |
 | Modèle LLM | Un message dans OpenCode | Une vraie réponse, sans erreur d'authentification |
+| Juge LLM, pour TP3 | Configuration validée avec le formateur | Endpoint compatible, modèle et secret autorisés disponibles |
 | GitLab, pour TP4 | Accès au projet d'atelier | Droits suffisants pour gérer branche protégée, CI et revue |
 
 Installez les outils manquants avec les instructions de votre environnement.
@@ -109,4 +147,6 @@ N'envoyez que les données fictives de cet atelier au fournisseur autorisé.
 
 Vous pouvez passer au TP1 si Java et Maven utilisent un JDK compatible, si OpenCode
 répond avec le modèle retenu et si les deux chemins de travail sont définis.
-Un accès GitLab peut être préparé plus tard, mais il sera indispensable au TP4.
+Les accès au juge et à GitLab ainsi que le runner doivent déjà avoir été prévalidés
+par le formateur pour tenir le parcours complet. Signalez dès l'accueil tout écart
+avec cette préparation ; n'attendez pas TP3 ou TP4 pour découvrir un accès manquant.

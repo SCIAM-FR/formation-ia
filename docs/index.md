@@ -33,6 +33,51 @@ Suivez les TP dans cet ordre : chaque livrable sert d'entrée au suivant. Les pa
 précisent les fichiers à ouvrir, les commandes à lancer, les résultats à observer et
 les erreurs fréquentes. Les blocs de commandes supposent un shell Bash/Zsh ou WSL.
 
+## Programme sur deux jours
+
+Proposition de cadence : **14 h d'enseignement hors pauses**, réparties en deux
+journées de 7 h. Les durées sont des **cibles pédagogiques**, dépendantes d'un
+environnement prêt, et non des temps d'exécution garantis.
+
+| Jour 1 | Durée |
+| --- | --- |
+| Accueil et vérification de la préparation | 15 min |
+| M0 | 30 min |
+| M1 | 1 h |
+| M2 | 1 h |
+| TP1 — Essentiel | 1 h 30 |
+| M3 | 45 min |
+| TP2 — Essentiel | 1 h 30 |
+| Débriefing | 30 min |
+| **Total J1** | **7 h** |
+
+| Jour 2 | Durée |
+| --- | --- |
+| M4 | 1 h |
+| TP3 — Essentiel | 2 h |
+| M5 | 45 min |
+| M6 | 30 min |
+| TP4 — Essentiel | 1 h 30 |
+| M7 | 1 h |
+| Bilan | 15 min |
+| **Total J2** | **7 h** |
+
+Les modules M0 à M7 correspondent au support de présentation. Les quatre TP
+occupent **6 h 30**. Leurs guides identifient le périmètre **essentiel** et les
+preuves nécessaires pour passer à la suite. Les **approfondissements** conservent
+les exercices plus longs : seconde génération individuelle au TP1, répétitions
+de robustesse au TP2, dataset complet et mutations supplémentaires au TP3,
+installation CI de zéro et test de suppression répété au TP4.
+
+Ils sont prévus **hors des 14 h**, ou si vous avez de l'avance, **sans supprimer
+les étapes essentielles**. Une régénération nécessaire pour corriger un échec
+n'est pas une répétition facultative : elle peut imposer d'allonger l'atelier.
+Le formateur doit vérifier les accès et préparer l'environnement CI ainsi que
+le fournisseur du juge **avant la séance** :
+voir la [checklist de préparation]({{ '/preparation/' | relative_url }}).
+Sans ces prérequis, prévoyez du temps supplémentaire ou annoncez une démonstration
+partielle ; ni un juge ignoré ni une CI fictive ne valent validation.
+
 ## La règle du jeu
 
 **Vous pilotez la création, vous gardez la vérification.** En TP1, faites écrire le
