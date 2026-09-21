@@ -1,6 +1,6 @@
 # TP3 — Évaluer le Skill `create-quarkus-mcp-server`
 
-**[Guide détaillé sur GitHub Pages](https://sebastienblanc.github.io/formation-ia/tp3/)**
+**[Guide détaillé sur GitHub Pages](https://sciam-fr.github.io/formation-ia/tp3/)**
 · [Source du guide](../docs/tp3.md)
 
 Harnais d'éval 100 % Java. **Le squelette fournit la plomberie ; vous écrivez ce qui porte
