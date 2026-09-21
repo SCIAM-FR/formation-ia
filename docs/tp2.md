@@ -19,6 +19,17 @@ Entrées : votre baseline et son tableau d'écarts.
 Fichier à compléter :
 [`tp2-skill/skills/create-quarkus-mcp-server/SKILL.md`]({{ site.repository_url }}/blob/main/tp2-skill/skills/create-quarkus-mcp-server/SKILL.md).
 
+## Essentiel et approfondissement
+
+| Parcours | Sections concernées | Preuve de sortie |
+| --- | --- | --- |
+| **Essentiel — 1 h 30 cible** | 1 à 5, puis 6 pour sauvegarder et corriger si nécessaire | Skill et référence installés, chargement prouvé, **une génération neuve** sans copie de TP1, build/MCP vérifiés, comparaison et limites écrites, sources sauvegardées dans le repo |
+| **Approfondissement — hors 14 h ou si avance** | 6 : répétitions supplémentaires de robustesse | Sorties indépendantes à prompt, modèle et version du Skill identiques ; stabilité mesurée sans promesse de reproductibilité |
+
+Une régénération pour vérifier une règle corrigée après échec reste **nécessaire**,
+pas facultative. Elle peut dépasser la durée cible ; ne la confondez pas avec
+les répétitions supplémentaires d'un premier résultat satisfaisant.
+
 ## 1. Relier chaque écart à une règle
 
 Relisez les [conventions maison]({{ site.repository_url }}/blob/main/domaine/conventions.md).
@@ -142,18 +153,23 @@ pour rendre la comparaison plus flatteuse.
 
 ## 6. Itérer sans tricher
 
-Si une règle échoue, modifiez le **Skill source du clone**, recopiez-le dans le projet
-d'essai et régénérez dans un **nouveau répertoire** avec une nouvelle session.
-Corriger seulement le Java généré ne corrige pas le savoir-faire.
+**Essentiel en cas d'échec :** si une règle échoue, modifiez le **Skill source du
+clone** et sa référence si nécessaire, puis réinstallez les deux comme en section 3
+dans un **nouveau répertoire**. Régénérez avec une nouvelle session et revérifiez
+le chargement, le build et les appels MCP. Corriger seulement le Java généré ne
+corrige pas le savoir-faire. Conservez aussi la sortie en échec et les changements
+de version du Skill.
 
-Refaites au moins une génération indépendante avec le même prompt, le même modèle
-et la même version du Skill, puis comparez les critères. Deux succès ne prouvent
-pas une garantie universelle, mais permettent déjà de repérer une règle instable.
-Conservez chaque sortie séparément.
+**Approfondissement :** après un premier résultat satisfaisant, refaites des
+générations indépendantes avec le même prompt, le même modèle et la même version
+du Skill, puis comparez les critères. Deux succès ne prouvent pas une garantie
+universelle, mais permettent déjà de repérer une règle instable. Conservez chaque
+sortie séparément. Ces répétitions ne sont pas requises dans les 1 h 30 essentielles.
 
 Le `.gitignore` des supports exclut `.opencode/` : versionnez bien la source sous
-`tp2-skill/skills/` et sa référence, pas uniquement la copie installée.
-La publication et les protections GitLab seront réalisées au TP4.
+`tp2-skill/skills/` et sa référence sous `tp2-skill/references/`, pas uniquement la
+copie installée. Cette sauvegarde dans votre repo local fait partie de l'essentiel.
+La publication et les protections GitLab seront réalisées **au TP4, pas au TP2**.
 
 ## Dépannage
 
@@ -168,5 +184,9 @@ La publication et les protections GitLab seront réalisées au TP4.
 ## Point de passage
 
 Le Skill se charge réellement, sa référence est accessible, une génération neuve
-a été comparée à TP1 et les écarts restants sont explicites. Vous pouvez maintenant
-transformer cette comparaison en évaluation exécutable.
+a été construite, inspectée et comparée à TP1, et les sources du Skill et de sa
+référence sont sauvegardées dans le repo. Les écarts restants et les limites de
+cette unique observation sont explicites : ne concluez pas à la répétabilité.
+Si une règle a dû être corrigée, sa vérification sur une nouvelle génération est
+requise. Conservez le chemin exact de la génération retenue pour TP3 ; si ce n'est
+plus `serveur-avec-skill`, adaptez les commandes du guide suivant.

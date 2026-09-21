@@ -6,6 +6,16 @@
 **Objectif** : piloter OpenCode pour produire un serveur MCP en Quarkus. Vous **n'écrivez
 pas de Java à la main** : vous promptez, vous relisez, vous validez.
 
+## Deux parcours
+
+| Parcours | Sections du guide | Preuve de sortie |
+| --- | --- | --- |
+| **Essentiel — 1 h 30 cible** | 1 à 6 | Un serveur vanilla construit et démarré, appels MCP vérifiés, comparaison avec un voisin, baseline et écarts éventuels conservés |
+| **Approfondissement** | 5 | Une seconde génération individuelle indépendante comparée à la première |
+
+Les approfondissements se font hors des 14 h de formation ou si vous avez de
+l'avance, sans supprimer l'essentiel. La cible suppose un environnement prêt.
+
 ## Consigne
 
 Faites générer par OpenCode un serveur MCP Quarkus qui, sur le domaine
@@ -21,22 +31,25 @@ Faites générer par OpenCode un serveur MCP Quarkus qui, sur le domaine
 
 ## Ce que vous validez
 
-1. Le serveur **démarre** (`quarkus dev`).
-2. Les primitives **s'enregistrent au build** (atout Quarkus : une erreur de signature
-   explose à la compilation).
-3. Vous inspectez la sortie avec l'inspecteur MCP du dev mode.
+1. Le build et les tests passent (`mvn test`), puis le serveur **démarre**
+   (`mvn quarkus:dev`).
+2. Les deux tools, la resource paramétrée et le prompt sont exposés avec le contrat
+   attendu ; un build vert ne suffit pas à le prouver.
+3. Vous vérifiez les appels avec l'inspecteur MCP du dev mode ou un client compatible.
 
 ## Le vrai livrable : le constat
 
-Mettez vos serveurs côte à côte avec vos voisins. **Ça marche — mais chacun a un résultat
-différent** : structure, choix de transport, nommage, annotations qui divergent.
+Mettez vos serveurs côte à côte avec vos voisins. Comparez structure, choix de
+transport, nommage et annotations : des divergences **peuvent** apparaître.
+Consignez les écarts prouvés, ou leur absence ; conservez votre baseline.
 
-> Le modèle donne de la **capacité**, pas de la **conformité** ni de l'**uniformité**.
+> Le modèle donne de la **capacité**, pas une garantie de **conformité** ni
+> d'**uniformité**.
 
 C'est le déclencheur de TP2 : on va distiller la conformité dans un Skill.
 
 ## Note formateur
 
-Ne vendez pas TP1 comme « ça échoue » (un bon modèle produira un serveur correct). Cadrez
-sur la **non-conformité** : divergence entre participants, écarts aux conventions maison
-(`domaine/conventions.md`). La divergence est le point pédagogique, pas l'échec.
+Ne vendez pas TP1 comme « ça échoue » ni comme une non-conformité assurée : le modèle
+peut déjà respecter les conventions maison (`domaine/conventions.md`).
+Le point pédagogique est de **mesurer**, pas de provoquer l'échec ou la divergence.

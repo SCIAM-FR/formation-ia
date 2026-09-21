@@ -17,6 +17,16 @@ qui démarre**, **les preuves de ses appels MCP** et **un tableau des écarts**.
 Prérequis : la [préparation]({{ '/preparation/' | relative_url }}) est terminée.
 Support : [consigne du TP1]({{ site.repository_url }}/blob/main/tp1-serveur-vanilla/README.md).
 
+## Essentiel et approfondissement
+
+| Parcours | Sections concernées | Preuve de sortie |
+| --- | --- | --- |
+| **Essentiel — 1 h 30 cible** | 1 à 6 : une génération vanilla, build, démarrage, inspecteur, comparaison avec un voisin, baseline | Deux tools `find_service` / `get_owner`, resource `service://{name}`, prompt `fiche_service` observés ; appels vérifiés ; écarts éventuels et conditions conservés |
+| **Approfondissement — hors 14 h ou si avance** | 5 : seconde génération individuelle indépendante et nouvelle comparaison | Deux sorties séparées et variabilité documentée, sans supposer un échec |
+
+La durée suppose la préparation vérifiée ; les corrections nécessaires au
+fonctionnement restent essentielles. L'approfondissement ne remplace aucune preuve.
+
 ## 1. Créer un projet isolé
 
 Dans votre terminal préparé :
@@ -124,7 +134,9 @@ discutées. Aucun résultat ne doit inventer un propriétaire.
 **Seulement après la génération**, ouvrez les
 [conventions maison]({{ site.repository_url }}/blob/main/domaine/conventions.md)
 et la [référence formateur]({{ site.repository_url }}/blob/main/tp1-serveur-vanilla/ATTENDU.md).
-Comparez votre projet à celui d'un voisin, ou à une seconde génération indépendante.
+Dans le parcours essentiel, comparez votre projet à celui d'un voisin.
+La seconde génération individuelle indépendante est un **approfondissement** :
+conservez-la séparément si vous la réalisez.
 
 Complétez un tableau dans vos notes :
 
@@ -165,4 +177,7 @@ les résultats des appels et le tableau des écarts.
 ## Point de passage
 
 Passez au TP2 lorsque les quatre primitives ont été observées, que les appels métier
-sont vérifiés et que vous savez distinguer **fonctionnement** et **conformité**.
+sont vérifiés, que la baseline et la comparaison avec un voisin sont conservées
+et que vous savez distinguer **fonctionnement** et **conformité**. Un tableau sans
+écart est recevable s'il est étayé ; une seconde génération individuelle n'est pas
+requise pour ce passage.
