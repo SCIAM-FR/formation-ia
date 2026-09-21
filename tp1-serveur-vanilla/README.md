@@ -1,5 +1,8 @@
 # TP1 — Bâtir un serveur MCP Quarkus avec OpenCode
 
+**[Guide détaillé sur GitHub Pages](https://sebastienblanc.github.io/formation-ia/tp1/)**
+· [Source du guide](../docs/tp1.md)
+
 **Objectif** : piloter OpenCode pour produire un serveur MCP en Quarkus. Vous **n'écrivez
 pas de Java à la main** : vous promptez, vous relisez, vous validez.
 

@@ -1,0 +1,31 @@
+title: Du protocole MCP à l'usine logicielle IA
+description: Quatre travaux pratiques pour générer, formaliser, évaluer et gouverner un serveur MCP Quarkus.
+lang: fr
+url: https://sebastienblanc.github.io
+baseurl: /formation-ia
+repository_url: https://github.com/sebastienblanc/formation-ia
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+navigation:
+  - title: Le parcours
+    url: /
+  - title: Préparer son poste
+    url: /preparation/
+  - title: TP1 · Générer
+    url: /tp1/
+  - title: TP2 · Formaliser
+    url: /tp2/
+  - title: TP3 · Évaluer
+    url: /tp3/
+  - title: TP4 · Gouverner
+    url: /tp4/

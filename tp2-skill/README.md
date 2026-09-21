@@ -1,5 +1,8 @@
 # TP2 — Écrire le Skill `create-quarkus-mcp-server`
 
+**[Guide détaillé sur GitHub Pages](https://sebastienblanc.github.io/formation-ia/tp2/)**
+· [Source du guide](../docs/tp2.md)
+
 **Objectif** : distiller le savoir-faire de TP1 dans un Skill, pour qu'OpenCode produise
 un serveur MCP Quarkus **conforme**, de façon **répétable**.
 
