@@ -9,3 +9,10 @@ target/
 # IDE
 .idea/
 .vscode/
+# GitHub Pages / Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+.bundle/
+docs/vendor/

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'fr' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title | escape }} — {{ site.title | escape }}</title>
+    <meta name="description" content="{{ page.description | default: site.description | escape }}">
+    <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+  </head>
+  <body>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <header class="site-header">
+      <a class="brand" href="{{ '/' | relative_url }}">SCIAM <span>Formation IA</span></a>
+      <a href="{{ site.repository_url }}">Voir le dépôt ↗</a>
+    </header>
+    <div class="shell">
+      <aside class="sidebar">
+        <p class="eyebrow">Le fil rouge</p>
+        <p>Du protocole MCP à l'usine logicielle IA</p>
+        <nav aria-label="Parcours de formation">
+          {% for item in site.navigation %}
+          <a href="{{ item.url | relative_url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a>
+          {% endfor %}
+        </nav>
+        <p class="sidebar-note">On délègue la création.<br>On garde la vérification.</p>
+      </aside>
+      <main id="contenu" tabindex="-1">
+        <article>
+          <p class="eyebrow">{{ page.eyebrow | default: 'Guide participant' }}</p>
+          <h1>{{ page.title }}</h1>
+          {% if page.description %}<p class="lead">{{ page.description }}</p>{% endif %}
+          {{ content }}
+        </article>
+        <nav class="page-navigation" aria-label="Étapes du parcours">
+          {% if page.previous_url %}<a href="{{ page.previous_url | relative_url }}">← {{ page.previous_title }}</a>{% endif %}
+          {% if page.next_url %}<a href="{{ page.next_url | relative_url }}">{{ page.next_title }} →</a>{% endif %}
+        </nav>
+        <footer>Formation pratique · Java / Quarkus / MCP / OpenCode</footer>
+      </main>
+    </div>
+  </body>
+</html>
