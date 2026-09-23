@@ -4,6 +4,8 @@ description: Faire du Skill un actif revu, évalué et protégé, puis organiser
 permalink: /tp4/
 previous_url: /tp3/
 previous_title: TP3 — Évaluer
+next_url: /fiche-de-sortie/
+next_title: Fiche de sortie (M7)
 ---
 
 ## Objectif et livrables

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PROJET PIÈGE — démonstration formateur (M4). Ne compile pas : le harnais ne lit que du texte. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sciam.formation</groupId>
+  <artifactId>projet-piege</artifactId>
+  <version>0.0.1</version>
+  <dependencies>
+    <dependency>
+      <groupId>io.quarkiverse.mcp</groupId>
+      <artifactId>quarkus-mcp-server-http</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+</project>

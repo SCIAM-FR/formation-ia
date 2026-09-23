@@ -24,6 +24,12 @@ Les participants y vérifient leurs accès ; ils n'y installent pas toute la cha
 | Modèles et secrets CI autorisés | Génération et juge accessibles dans le contexte de MR de confiance retenu, sans exposer les clés aux contributions non fiables |
 | Chaîne de génération TP4 | Génération neuve depuis le Skill du checkout de la MR, preuve de chargement, build et évaluation réels ; échec bloquant et rapports conservés |
 
+Le dossier [`formateur/`]({{ site.repository_url }}/tree/main/formateur) du dépôt
+regroupe la démonstration du scorer trompeur (M4), un corrigé possible des
+assertions du TP3 et la trace fictive du mini-exercice M5. Les sorties de
+génération conformes et non conformes utiles au débrief se produisent lors de la
+répétition, avec le modèle et les versions retenus ; archivez-les hors du dépôt.
+
 Le dépôt livre un **template de CI avec un `echo` TODO**, pas une CI clé en main.
 Le formateur adapte et éprouve la plomberie des
 [sections 3 et 4 du TP4]({{ '/tp4/' | relative_url }})

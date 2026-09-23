@@ -13,7 +13,19 @@ Il sera accessible après activation de GitHub Pages et premier déploiement.
 
 Les guides sont aussi consultables dans le dépôt :
 [accueil](docs/index.md), [préparation](docs/preparation.md),
-[TP1](docs/tp1.md), [TP2](docs/tp2.md), [TP3](docs/tp3.md), [TP4](docs/tp4.md).
+[TP1](docs/tp1.md), [TP2](docs/tp2.md), [TP3](docs/tp3.md), [TP4](docs/tp4.md),
+[fiche de sortie de l'atelier M7](docs/fiche-de-sortie.md).
+
+## Supports et références formateur
+
+- [`slides/Support_formation_SCIAM.pptx`](slides/Support_formation_SCIAM.pptx) :
+  le deck (58 diapositives), notes formateur incluses.
+- [`Plaquette_IA-PLT-USINE.pdf`](Plaquette_IA-PLT-USINE.pdf) : la plaquette,
+  générée depuis [`plaquette/plaquette.html`](plaquette/plaquette.html) par
+  `python3 plaquette/build.py` (PyMuPDF requis).
+- [`formateur/`](formateur/README.md) : démonstration du scorer trompeur (M4),
+  corrigé possible des assertions (TP3), trace fictive du mini-exercice (M5).
+  Réservé au formateur ; les squelettes participants restent incomplets.
 
 ## Fil rouge
 

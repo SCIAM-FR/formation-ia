@@ -99,6 +99,8 @@ pas un corrigé : ils vous accompagnent pour produire et défendre vos propres c
   les données communes à tous les TP.
 - [Conventions maison]({{ site.repository_url }}/blob/main/domaine/conventions.md) :
   la cible de conformité, à étudier **après la première génération vanilla**.
+- [Fiche de sortie]({{ '/fiche-de-sortie/' | relative_url }}) : le canevas de
+  l'atelier M7, une capacité de votre organisation en neuf lignes.
 
 La publication de ces guides se fait sur **GitHub Pages**. La gouvernance du Skill
 en TP4 se pratique sur **GitLab** : ce sont deux usages distincts.

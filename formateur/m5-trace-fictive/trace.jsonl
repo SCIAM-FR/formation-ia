@@ -1,0 +1,14 @@
+{"ts":"2026-09-30T09:14:02.118Z","trace":"tr-7f21","span":"s-01","kind":"llm.request","agent":"assistant-astreinte","client":"oncall-bot","model":"fournisseur/modele-x","tokens_in":1834}
+{"ts":"2026-09-30T09:14:03.402Z","trace":"tr-7f21","span":"s-02","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"facturation"},"status":"ok","ms":41}
+{"ts":"2026-09-30T09:14:04.910Z","trace":"tr-7f21","span":"s-03","kind":"tool.call","server":"catalogue-mcp","tool":"get_owner","args":{"service":"facturation"},"status":"ok","ms":37}
+{"ts":"2026-09-30T09:14:06.233Z","trace":"tr-7f21","span":"s-04","kind":"tool.call","server":"catalogue-mcp","tool":"delete_service","args":{"service":"facturation"},"client_allowed_tools":["find_service","get_owner"],"status":"ok","ms":88,"note":"INCIDENT A"}
+{"ts":"2026-09-30T09:14:06.240Z","trace":"tr-7f21","span":"s-04","kind":"audit","server":"catalogue-mcp","actor":"oncall-bot","action":"delete_service","authz_decision":"absent"}
+{"ts":"2026-09-30T09:21:10.007Z","trace":"tr-9a03","span":"s-01","kind":"llm.request","agent":"assistant-astreinte","client":"oncall-bot","model":"fournisseur/modele-x","tokens_in":2210}
+{"ts":"2026-09-30T09:21:11.100Z","trace":"tr-9a03","span":"s-02","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"Team Catalog"},"status":"ok","ms":39}
+{"ts":"2026-09-30T09:21:13.300Z","trace":"tr-9a03","span":"s-03","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"Team Catalog"},"status":"ok","ms":40}
+{"ts":"2026-09-30T09:21:15.480Z","trace":"tr-9a03","span":"s-04","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"Team Catalog"},"status":"ok","ms":38}
+{"ts":"2026-09-30T09:22:39.912Z","trace":"tr-9a03","span":"s-43","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"Team Catalog"},"status":"ok","ms":42,"note":"INCIDENT B — 42e appel identique en 90 s, aucune réponse finale, coût session x20"}
+{"ts":"2026-09-30T09:22:40.001Z","trace":"tr-9a03","span":"s-44","kind":"session.end","reason":"client_timeout","tool_calls":42,"cost_ratio_vs_median":20.3,"circuit_breaker":"none"}
+{"ts":"2026-09-30T10:02:51.664Z","trace":"tr-c4d8","span":"s-01","kind":"llm.request","agent":"assistant-astreinte","client":"oncall-bot","model":"fournisseur/modele-x","tokens_in":1560}
+{"ts":"2026-09-30T10:02:52.870Z","trace":"tr-c4d8","span":"s-02","kind":"tool.call","server":"catalogue-mcp","tool":"find_service","args":{"query":"notifications ; clé du webhook : sk-live-FICTIVE-4f9e2b7c1a"},"status":"ok","ms":44,"note":"INCIDENT C — secret en clair dans un argument, exporté vers la plateforme de logs, rétention 90 j"}
+{"ts":"2026-09-30T10:02:52.875Z","trace":"tr-c4d8","span":"s-02","kind":"log.export","destination":"plateforme-logs","retention_days":90,"redaction":"none"}

@@ -1,7 +1,20 @@
 {
-  "_note": "Exemple — permissions de Skills par agent (allow/deny). À adapter au schéma OpenCode courant.",
+  "$schema": "https://opencode.ai/config.json",
+  "_note": "Exemple — permissions de chargement du Skill par agent, au schéma permission.skill (singulier) documenté sur https://opencode.ai/docs/skills/. Extrait à fusionner dans le opencode.json d'atelier, en conservant les autres réglages. À vérifier avec la version d'OpenCode retenue pour la session : le nom des agents (build, plan, ou un agent de revue personnalisé) doit correspondre aux agents réellement utilisés. Ce réglage ne contrôle ni les droits GitLab ni l'authentification/autorisation MCP.",
   "agent": {
-    "build":  { "skills": { "create-quarkus-mcp-server": "allow" } },
-    "review": { "skills": { "create-quarkus-mcp-server": "deny"  } }
+    "build": {
+      "permission": {
+        "skill": {
+          "create-quarkus-mcp-server": "allow"
+        }
+      }
+    },
+    "plan": {
+      "permission": {
+        "skill": {
+          "create-quarkus-mcp-server": "deny"
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Plaquette IA-PLT-USINE</title>
+</head>
+<body>
+
+<p class="eyebrow">SCIAM · FORMATION SUR-MESURE</p>
+<h1>Industrialiser et gouverner l’IA générative</h1>
+<p class="subtitle">Du protocole MCP à l’usine logicielle IA</p>
+
+<p>Monter une platform team IA, ce n’est pas écrire un agent de plus : c’est construire la « route
+pavée » que les équipes produit du groupe emprunteront — un socle d’intégration fiable (MCP),
+un contexte LLM partagé et gouverné, et une discipline d’évaluation qui tient en production.</p>
+
+<p>Cette formation parcourt cette chaîne de bout en bout, avec un fil rouge concret et « méta » : les
+participants outillent la fabrication même des serveurs MCP. Les travaux pratiques sont menés
+en Java / Quarkus, pilotés avec l’agent OpenCode, versionnés et gouvernés sur GitLab, tout en
+restant agnostiques sur le fournisseur de LLM. Deux jours suffisent à <b>poser les fondations</b> ;
+ils ne livrent pas une plateforme prête pour la production.</p>
+
+<h2>Informations clés</h2>
+<table class="infos">
+<tr><td class="k">Durée</td><td>2 jours (14 heures) : le parcours essentiel, avec un environnement préparé avant la séance. Les approfondissements des guides sont complémentaires, hors de ces 14 heures.</td></tr>
+<tr><td class="k">Référence</td><td>IA-PLT-USINE — sur-mesure / intra</td></tr>
+<tr><td class="k">Public</td><td>Platform engineers, tech leads, architectes, profils DevEx/DevOps, référents IA</td></tr>
+<tr><td class="k">Prérequis</td><td>Savoir lire et compléter un test Java simple (JUnit) · bases de Git et Maven · expérience d’intégration d’une API LLM · notions d’IA générative · poste préparé avant la séance selon la checklist fournie (JDK 21+, Maven, OpenCode connecté)</td></tr>
+<tr><td class="k">Conditions techniques</td><td>Fournisseur de LLM autorisé par l’organisation (génération et juge du TP3) · accès réseau vers ce fournisseur et les dépôts Maven · projet GitLab d’atelier avec un runner adapté. Le catalogue métier est autonome ; la formation n’est pas hors ligne.</td></tr>
+<tr><td class="k">Modalités</td><td>Présentiel · alternance d’apports et de travaux pratiques · guides pas à pas en ligne pour chaque TP</td></tr>
+<tr><td class="k">Évaluation</td><td>Travaux pratiques continus et grille d’auto-évaluation avant/après sur quatre compétences (ci-dessous) · attestation remise</td></tr>
+</table>
+
+<h2>Objectifs pédagogiques</h2>
+<ul>
+<li>Situer l’écosystème agentique et le rôle de MCP comme socle d’intégration au système d’information</li>
+<li>Piloter un agent (OpenCode) pour produire un serveur MCP en Quarkus, et savoir en relire et valider la sortie</li>
+<li>Distiller un savoir-faire dans un Skill et partager le contexte LLM entre équipes de façon gouvernée</li>
+<li>Définir une stratégie d’évaluation des produits IA et l’outiller en Java</li>
+<li>Poser les fondations d’une gouvernance IA et d’un modèle opératoire d’usine logicielle IA à l’échelle du groupe</li>
+</ul>
+
+<h2>Fil rouge</h2>
+<p>Un même produit traverse les deux jours : le Skill <span class="code">create-quarkus-mcp-server</span>, qui génère des
+serveurs MCP conformes. On fait d’abord produire un serveur « vanilla » par OpenCode, on
+distille ce savoir-faire dans un Skill, on l’évalue avec un harnais Java, puis on le gouverne sur
+GitLab. Le domaine support — un catalogue de services interne, auto-contenu — assure une
+exécution fiable en salle.</p>
+
+<h2>Programme</h2>
+<p class="jour">Jour 1 — Construire et partager</p>
+<p class="mod"><b>M0 · La ligne de flottaison (keynote)</b>  —  <span class="d">le modèle mental qui structure les deux jours : ce
+que la plateforme construit, ce que le socle finit par absorber.</span></p>
+<p class="mod"><b>M1 · Fondations agentiques &amp; protocoles</b>  —  <span class="d">rappel du paysage LLM, anatomie d’un agent,
+tools / skills / mémoire, panorama MCP / A2A / A2UI / AP2.</span></p>
+<p class="mod"><b>M2 · Architecture MCP</b>  —  <span class="d">hôtes, clients, serveurs ; primitives tools / resources / prompts ;
+transports ; implémentation en Quarkus.</span></p>
+<p class="mod"><b>TP1 · Serveur MCP « vanilla » avec OpenCode</b>  —  <span class="d">piloter l’agent, relire la sortie ; comparaison
+des générations et mesure des écarts éventuels — une baseline déjà conforme est un résultat valable.</span></p>
+<p class="mod"><b>M3 · Le contexte LLM comme actif partagé</b>  —  <span class="d">context engineering ; MCP (outils) vs Skills
+(savoir-faire) ; OpenCode comme consommateur agnostique.</span></p>
+<p class="mod"><b>TP2 · Écrire le Skill create-quarkus-mcp-server</b>  —  <span class="d">distiller la conformité, puis « dogfood » :
+régénérer un serveur et le comparer à la baseline.</span></p>
+
+<p class="jour">Jour 2 — Évaluer et gouverner</p>
+<p class="mod"><b>M4 · Évaluer les produits IA</b>  —  <span class="d">spécificités de l’évaluation LLM, stratégie, datasets (happy /
+realistic / adverse), scorers ; lecture des résultats.</span></p>
+<p class="mod"><b>TP3 · Évaluer le Skill</b>  —  <span class="d">harnais d’évaluation 100 % Java (JUnit + LLM-as-a-Judge) sur le
+catalogue de services ; preuve qu’un test sait échouer.</span></p>
+<p class="mod"><b>M5 · Exploiter &amp; sécuriser en production</b>  —  <span class="d">observabilité, guardrails, sécurité des accès
+MCP (pattern gateway) ; mini-exercice de lecture d’une trace.</span></p>
+<p class="mod"><b>M6 · Gouverner le contexte à l’échelle</b>  —  <span class="d">GitLab : versioning, permissions, données
+sensibles, drift.</span></p>
+<p class="mod"><b>TP4 · Gouverner le Skill sur GitLab</b>  —  <span class="d">merge requests, branch protection, évaluation en
+intégration continue, permissions par agent.</span></p>
+<p class="mod"><b>M7 · Atelier — le modèle opératoire de l’usine logicielle IA</b>  —  <span class="d">catalogue de capacités,
+cycle de vie, fiche de sortie pour une première capacité du groupe.</span></p>
+
+<h2>Évaluation des acquis</h2>
+<p>Elle porte sur les <b>compétences des participants</b>, distinctes de la note obtenue par le Skill dans le harnais :
+la réussite du modèle ne vaut pas compétence acquise. Chacun se positionne en début puis en fin de formation sur
+quatre capacités observables :</p>
+<table class="grille">
+<tr><th>Compétence</th><th>Ce qui est observé</th></tr>
+<tr><td class="k">Lire un contrat MCP</td><td>Identifier tools, resources et prompts exposés par un serveur et vérifier leur contrat avec un inspecteur</td></tr>
+<tr><td class="k">Comparer une génération</td><td>Mesurer les écarts d’une sortie d’agent à une convention, avec preuves, sans présumer un échec</td></tr>
+<tr><td class="k">Éprouver un scorer</td><td>Écrire une assertion, la faire échouer sur un défaut contrôlé, puis la corriger ; calibrer un juge LLM par une lecture humaine</td></tr>
+<tr><td class="k">Expliquer une preuve de gouvernance</td><td>Montrer qu’une merge request est réellement bloquée par l’évaluation, puis débloquée par une correction, et dire où chaque contrôle s’applique</td></tr>
+</table>
+
+<h2>Modalités pédagogiques</h2>
+<p>Support de cours, guides pas à pas en ligne et dépôt de travaux pratiques fournis. Alternance d’apports théoriques
+et de travaux pratiques autour d’un produit fil rouge unique, construit puis évalué et gouverné sur les deux jours.
+Les 14 heures couvrent le parcours essentiel de chaque TP ; les approfondissements sont indiqués dans les guides.
+Programme sur-mesure, adaptable au contexte et à la stack du groupe.</p>
+
+<hr>
+<p class="footer">SCIAM · Architectes du logiciel</p>
+
+</body>
+</html>
