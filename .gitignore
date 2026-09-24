@@ -16,3 +16,8 @@ _site/
 .sass-cache/
 .bundle/
 docs/vendor/
+# Démo LiteLLM (formateur) — secrets et configuration réelle
+formateur/demo-litellm/.env
+formateur/demo-litellm/litellm-config.yaml
+formateur/demo-litellm/cles-demo.txt
+formateur/demo-litellm/keycloak/*.local.json

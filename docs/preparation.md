@@ -22,6 +22,7 @@ Les participants y vérifient leurs accès ; ils n'y installent pas toute la cha
 | Projet GitLab, comptes et offre | Accès participants, droits de protection de `main`, possibilités de revue CODEOWNERS identifiées |
 | Runner et environnement OpenCode | Job de MR exécuté dans un environnement isolé ; Java/Maven et OpenCode disponibles |
 | Modèles et secrets CI autorisés | Génération et juge accessibles dans le contexte de MR de confiance retenu, sans exposer les clés aux contributions non fiables |
+| Démonstration LiteLLM (M5), sur le poste formateur | Gateway locale démarrée, alias et équipes créés, juge du TP3 et serveur MCP du fil rouge passés à travers, refus et journal vérifiés, capture vidéo de secours ([`formateur/demo-litellm/`]({{ site.repository_url }}/tree/main/formateur/demo-litellm)) |
 | Chaîne de génération TP4 | Génération neuve depuis le Skill du checkout de la MR, preuve de chargement, build et évaluation réels ; échec bloquant et rapports conservés |
 
 Le dossier [`formateur/`]({{ site.repository_url }}/tree/main/formateur) du dépôt

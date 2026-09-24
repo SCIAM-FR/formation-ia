@@ -1,11 +1,12 @@
 # Formation IA — modifications restantes
 
-État au 21 septembre 2026, après la seconde passe : corrections techniques du deck,
-alignement de la plaquette et ajout des supports pédagogiques. Il reste la
-préparation opérationnelle de la session, qui ne se fait pas dans le dépôt.
+État au 23 septembre 2026, après la troisième passe : démonstration d'une gateway de
+modèles LiteLLM en M5, après les corrections techniques du deck, l'alignement de la
+plaquette et les supports pédagogiques. Il reste la préparation opérationnelle de la
+session, qui ne se fait pas dans le dépôt.
 
 Supports concernés : [slide deck](slides/Support_formation_SCIAM.pptx) (désormais
-**58 diapositives**), [plaquette](Plaquette_IA-PLT-USINE.pdf) (source dans
+**61 diapositives**), [plaquette](Plaquette_IA-PLT-USINE.pdf) (source dans
 [`plaquette/`](plaquette/)), [guides des TP](docs/index.md), squelettes du dépôt et
 [références formateur](formateur/README.md).
 
@@ -16,11 +17,11 @@ exercices à la place des participants.
 
 ### Première passe
 
-- Fiches TP (désormais diapos 28, 34, 43, 52) : consignes alignées sur les TP,
+- Fiches TP (désormais diapos 28, 34, 43, 55) : consignes alignées sur les TP,
   durées cibles, preuves attendues, distinction essentiel / approfondissement.
-- Diapos M6 (50–51) : séparation GitLab / OpenCode / accès MCP, conditions de revue
+- Diapos M6 (53–54) : séparation GitLab / OpenCode / accès MCP, conditions de revue
   et de blocage, statut de squelette de la CI explicité.
-- Diapo finale (58) : quatre livrables et limites avant production.
+- Diapo finale (61) : quatre livrables et limites avant production.
 - Diapos 2 et 13 : cadence ajustée ; programme détaillé de 14 h dans les guides,
   dont 6 h 30 de TP essentiels.
 - Guides et README : parcours, points de passage et préparation formateur.
@@ -71,10 +72,10 @@ exercices à la place des participants.
   [`formateur/demo-scorer-trompeur/`](formateur/demo-scorer-trompeur/).
 - [x] **Diapo 42 — Lecture des résultats** : build/tests, contrat MCP, assertions,
   juge ; « non exécuté » visible ; cinq cas = signal exploratoire.
-- [x] **Diapo 48 — Mini-exercice M5** (~15 min) : trois incidents fictifs ;
+- [x] **Diapo 51 (ex-48) — Mini-exercice M5** (~15 min) : trois incidents fictifs ;
   trace et corrigé dans [`formateur/m5-trace-fictive/`](formateur/m5-trace-fictive/).
-- [x] **Diapos 56–57 — Fiche de sortie M7** : livrable remplacé par la fiche
-  remplie ; canevas sur la diapo 57 et dans
+- [x] **Diapos 59–60 — Fiche de sortie M7** : livrable remplacé par la fiche
+  remplie ; canevas sur la diapo 60 et dans
   [`docs/fiche-de-sortie.md`](docs/fiche-de-sortie.md).
 - [x] **Permissions OpenCode** : exemple aligné sur `permission.skill`.
 - [x] **Références formateur** : corrigé possible des assertions dans
@@ -82,8 +83,35 @@ exercices à la place des participants.
 
 **À vérifier à l'ouverture du deck :** le rendu n'a pas pu être contrôlé
 visuellement (conversion PDF indisponible sur le poste). Ouvrir dans PowerPoint et
-vérifier les diapos 26 (schéma dessiné), 27 (QR codes), 42 et 57 (tableaux), ainsi
-que les fiches TP 28, 34, 43, 52 dont la colonne droite a gagné une ligne.
+vérifier les diapos 26 (schéma dessiné), 27 (QR codes), 42 et 60 (tableaux), ainsi
+que les fiches TP 28, 34, 43, 55 dont la colonne droite a gagné une ligne.
+
+### Troisième passe — gateway de modèles LiteLLM en démonstration (M5)
+
+Contrainte : **aucun hébergement possible chez le client**. La gateway n'entre donc
+ni dans le fil rouge des TP ni dans la préparation des participants. Elle est
+présentée en **démonstration de 20 min sur le poste du formateur** (Docker local,
+clé de fournisseur du formateur), en faisant passer le fil rouge à travers : le juge
+du TP3, une génération OpenCode, le serveur MCP généré. Le SSO est montré avec un
+**Keycloak local** dans le même compose (realm importé, trois comptes, rôle et
+équipe portés par un attribut et un groupe) ; gratuit jusqu'à cinq utilisateurs.
+
+- [x] **Deck** : diapos 48 (LiteLLM : ce qu'elle fait / ne fait pas), 49 (quatre
+  contrôles rattachés aux responsabilités de M0), 50 (déroulé de la démo : brancher,
+  refuser, tracer) ; mini-exercice trace (51) relié à la démo ; sommaire, jour 2,
+  M5 et notes M0 / gateway MCP ajustés. 61 diapositives.
+- [x] **Matériel formateur** [`formateur/demo-litellm/`](formateur/demo-litellm/README.md) :
+  compose LiteLLM + Postgres, configuration exemple (alias, serveur MCP du fil rouge
+  commenté), script de peuplement (équipes produit, platform-team, ci-usine, clé au
+  budget minuscule), extrait OpenCode, déroulé minuté et commandes prêtes. Secrets
+  et configuration réelle ignorés par git.
+- [x] **Cadence du jour 2** : M5 passe à 1 h (contenu 25 min, démo 20 min, trace
+  15 min) ; M7 passe à 45 min ; le reste est inchangé, total 7 h.
+- [x] **Plaquette** : M5 mentionne la démonstration ; un objectif pédagogique de
+  compréhension ajouté (ce qu'une gateway rend gouvernable, ce qui reste à décider).
+- Aucun changement dans les guides TP1–TP4 ni dans les squelettes participants.
+
+**À vérifier à l'ouverture du deck :** diapos 48 à 51.
 
 ## P1 — Préparer effectivement la prochaine session
 
@@ -117,6 +145,13 @@ Ces points relèvent de l'environnement d'atelier et de la répétition, pas du 
   serveurs conformes et non conformes avec le modèle de la session, pour le débrief
   et le dépannage. Le corrigé des assertions et la démonstration du scorer sont
   déjà dans `formateur/`.
+
+- [ ] **Préparer la démo LiteLLM (M5).** Sur le poste formateur : figer et embarquer
+  l'image, démarrer `formateur/demo-litellm/`, renseigner les modèles réels derrière
+  les alias, peupler équipes et clés, faire passer le juge du TP3 et le serveur MCP
+  du fil rouge, vérifier les trois refus et le journal, tester la connexion SSO Keycloak avec
+  `formateur` puis `alice` (rôle et équipe attendus), répéter en 20 min chrono et
+  enregistrer une vidéo de secours.
 
 - [ ] **Chronométrer une répétition.** Mesurer temps de génération, corrections,
   appels juge et pipelines. Ajuster les durées ou les prérequis sur ces observations ;

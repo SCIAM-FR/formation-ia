@@ -3,7 +3,10 @@
 Trois incidents fictifs dans une trace d'agent ; pour chacun, les binômes nomment
 **le contrôle**, **son emplacement** et **son responsable**. Ce n'est pas un
 cinquième TP : pas de code, une grille à remplir. Réservez environ 15 minutes sur
-les 45 de M5, après observabilité, guardrails et gateway.
+l'heure de M5, juste après la démonstration de la gateway de modèles : les binômes
+peuvent rattacher chaque incident à ce qu'ils viennent de voir (modèle refusé,
+`429` de débit, journal sans contenu des messages) — et à ce que la gateway ne
+règle pas (l'autorisation par outil, incident A).
 
 ## Déroulé
 

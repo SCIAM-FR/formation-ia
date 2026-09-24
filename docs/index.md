@@ -55,10 +55,10 @@ environnement prêt, et non des temps d'exécution garantis.
 | --- | --- |
 | M4 | 1 h |
 | TP3 — Essentiel | 2 h |
-| M5 | 45 min |
+| M5, dont démonstration d'une gateway de modèles (20 min) | 1 h |
 | M6 | 30 min |
 | TP4 — Essentiel | 1 h 30 |
-| M7 | 1 h |
+| M7 | 45 min |
 | Bilan | 15 min |
 | **Total J2** | **7 h** |
 

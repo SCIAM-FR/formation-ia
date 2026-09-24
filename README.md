@@ -19,12 +19,13 @@ Les guides sont aussi consultables dans le dépôt :
 ## Supports et références formateur
 
 - [`slides/Support_formation_SCIAM.pptx`](slides/Support_formation_SCIAM.pptx) :
-  le deck (58 diapositives), notes formateur incluses.
+  le deck (61 diapositives), notes formateur incluses.
 - [`Plaquette_IA-PLT-USINE.pdf`](Plaquette_IA-PLT-USINE.pdf) : la plaquette,
   générée depuis [`plaquette/plaquette.html`](plaquette/plaquette.html) par
   `python3 plaquette/build.py` (PyMuPDF requis).
 - [`formateur/`](formateur/README.md) : démonstration du scorer trompeur (M4),
-  corrigé possible des assertions (TP3), trace fictive du mini-exercice (M5).
+  corrigé possible des assertions (TP3), trace fictive du mini-exercice (M5),
+  démonstration d'une gateway de modèles LiteLLM sur le poste formateur (M5).
   Réservé au formateur ; les squelettes participants restent incomplets.
 
 ## Fil rouge
