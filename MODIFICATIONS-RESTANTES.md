@@ -147,8 +147,8 @@ Ces points relèvent de l'environnement d'atelier et de la répétition, pas du 
   déjà dans `formateur/`.
 
 - [ ] **Préparer la démo LiteLLM (M5).** Sur le poste formateur : figer et embarquer
-  l'image, démarrer `formateur/demo-litellm/`, renseigner les modèles réels derrière
-  les alias, peupler équipes et clés, faire passer le juge du TP3 et le serveur MCP
+  l'image, démarrer `formateur/demo-litellm/`, coller la clé OpenCode Zen, vérifier les
+  modèles et les prix Zen derrière les alias, peupler équipes et clés, faire passer le juge du TP3 et le serveur MCP
   du fil rouge, vérifier les trois refus et le journal, tester la connexion SSO Keycloak avec
   `formateur` puis `alice` (rôle et équipe attendus), répéter en 20 min chrono et
   enregistrer une vidéo de secours.

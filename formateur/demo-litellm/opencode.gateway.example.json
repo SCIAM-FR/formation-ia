@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "_note": "Extrait à fusionner dans le opencode.json du poste formateur. Pour la démo : LITELLM_KEY contient la clé virtuelle d'une équipe, jamais la clé maître ni la clé du fournisseur. À vérifier avec la version d'OpenCode retenue (documentation : opencode.ai/docs/providers).",
+  "provider": {
+    "gateway-demo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Gateway LLM de démonstration (LiteLLM)",
+      "options": {
+        "baseURL": "http://localhost:4000/v1",
+        "apiKey": "{env:LITELLM_KEY}"
+      },
+      "models": {
+        "modele-generation": {
+          "name": "Modèle de génération (alias gateway)"
+        }
+      }
+    }
+  },
+  "model": "gateway-demo/modele-generation"
+}

@@ -1,0 +1,73 @@
+# Configuration de DÉMONSTRATION LiteLLM (poste formateur) — à copier en litellm-config.yaml et à adapter.
+# La salle ne voit que les ALIAS (modele-generation, modele-juge) :
+# le fournisseur réel et ses identifiants restent côté gateway.
+
+model_list:
+  # Fournisseur : OpenCode Zen (https://opencode.ai/zen). Clé dans OPENCODE_API_KEY, jamais dans ce fichier.
+  # Zen expose trois familles d'endpoints selon le modèle : /chat/completions (DeepSeek, GLM, Kimi, MiniMax,
+  # modèles gratuits), /messages (Claude, Qwen — format Anthropic) et /responses (GPT, Grok — Responses API).
+  # LiteLLM ne connaît pas les prix de Zen : ils sont renseignés dans model_info pour que la dépense soit juste.
+  # Tarifs relevés le 25 sept. 2026 sur opencode.ai/docs/zen — à vérifier avant la démo.
+
+  - model_name: modele-generation          # alias vu par OpenCode — un modèle Zen de la démo, pas forcément celui des TP
+    litellm_params:
+      model: openai/deepseek-v4-pro        # préfixe openai/ = format chat/completions
+      api_base: https://opencode.ai/zen/v1
+      api_key: os.environ/OPENCODE_API_KEY
+    model_info:
+      access_groups: ["atelier"]
+      input_cost_per_token: 0.00000174     # 1,74 $ / M tokens
+      output_cost_per_token: 0.00000348    # 3,48 $ / M tokens
+
+  - model_name: modele-juge                # alias utilisé par tp3-eval (LLM_MODEL) — bon marché, suffisant pour une grille
+    litellm_params:
+      model: openai/deepseek-v4-flash
+      api_base: https://opencode.ai/zen/v1
+      api_key: os.environ/OPENCODE_API_KEY
+    model_info:
+      access_groups: ["atelier", "ci"]
+      input_cost_per_token: 0.00000014     # 0,14 $ / M
+      output_cost_per_token: 0.00000028    # 0,28 $ / M
+
+  # Modèle volontairement NON autorisé aux équipes produit : sert à montrer un refus pendant la démo.
+  # Claude passe par l'endpoint Anthropic de Zen : préfixe anthropic/, api_base SANS /v1 (LiteLLM ajoute /v1/messages).
+  - model_name: modele-reserve
+    litellm_params:
+      model: anthropic/claude-opus-5-5
+      api_base: https://opencode.ai/zen
+      api_key: os.environ/OPENCODE_API_KEY
+    model_info:
+      access_groups: ["direction"]
+      input_cost_per_token: 0.000004       # 4 $ / M
+      output_cost_per_token: 0.00002       # 20 $ / M
+
+  # Non retenus pour la démo : les modèles GPT / Grok de Zen ne parlent que la Responses API (/responses),
+  # que LiteLLM ne route pas depuis chat/completions sans configuration supplémentaire. Les modèles gratuits
+  # de Zen (ex. big-pickle, /chat/completions) peuvent servir de modèle de repli sans coût, mais leurs
+  # propres limites de débit brouilleraient la démonstration du 429.
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+  # Après création d'un compte proxy_admin dans l'interface, désactiver la connexion par variables :
+  # disable_env_credential_login: true
+  # SSO Keycloak : rattacher l'utilisateur aux équipes dont le team_id figure dans la revendication « groups »
+  # (le script preparer-demo.sh crée les équipes avec team_id = nom du groupe Keycloak). À vérifier sur la version.
+  litellm_jwtauth:
+    team_ids_jwt_field: "groups"
+
+litellm_settings:
+  drop_params: true                        # ignore les paramètres non supportés par le modèle cible
+  # Journaux : ne pas conserver le contenu des messages dans les logs de dépense (données d'atelier fictives, mais bonne habitude)
+  turn_off_message_logging: true
+  # Repli entre modèles (à montrer si le temps le permet) :
+  # fallbacks: [{"modele-generation": ["modele-juge"]}]
+  # num_retries: 2
+
+# Dernière étape de la démo — exposer le serveur MCP du fil rouge derrière la gateway (MCP gateway).
+# Le serveur Quarkus généré (mvn quarkus:dev sur le poste) doit être joignable depuis le conteneur
+# (host.docker.internal). L'accès par clé/équipe se règle ensuite dans l'interface ou via l'API.
+# mcp_servers:
+#   catalogue:
+#     url: "http://host.docker.internal:8080/mcp"   # relever le point d'accès réel exposé par le serveur généré
+#     transport: "http"

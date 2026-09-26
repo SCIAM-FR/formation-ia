@@ -1,0 +1,75 @@
+# Gateway LLM de DÉMONSTRATION (poste formateur, M5) — LiteLLM + Postgres.
+# Pas de TLS, pas de sauvegarde, secrets dans .env : ne pas réutiliser tel quel chez un client.
+# Avant la séance : cp .env.example .env, renseigner les clés, docker compose up -d.
+services:
+  litellm:
+    image: docker.litellm.ai/berriai/litellm:main-stable   # figer un tag précis pour la session
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY}
+      DATABASE_URL: postgresql://litellm:${POSTGRES_PASSWORD}@db:5432/litellm
+      # Clé OpenCode Zen (fournisseur de modèles), référencée dans litellm-config.yaml via os.environ/OPENCODE_API_KEY
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY}
+      # Interface d'administration : http://localhost:4000/ui (identifiants ci-dessous, puis compte proxy_admin)
+      UI_USERNAME: ${UI_USERNAME:-admin}
+      UI_PASSWORD: ${UI_PASSWORD}
+      # SSO via Keycloak local (gratuit jusqu'à 5 utilisateurs, Enterprise au-delà) : voir README.md, « SSO avec Keycloak ».
+      # Le navigateur parle à Keycloak sur localhost:8180 ; le conteneur LiteLLM lui parle sur keycloak:8080.
+      PROXY_BASE_URL: http://localhost:4000
+      GENERIC_CLIENT_ID: litellm
+      GENERIC_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      GENERIC_AUTHORIZATION_ENDPOINT: http://localhost:8180/realms/formation-ia/protocol/openid-connect/auth
+      GENERIC_TOKEN_ENDPOINT: http://keycloak:8080/realms/formation-ia/protocol/openid-connect/token
+      GENERIC_USERINFO_ENDPOINT: http://keycloak:8080/realms/formation-ia/protocol/openid-connect/userinfo
+      GENERIC_SCOPE: "openid profile email"
+      GENERIC_USER_ID_ATTRIBUTE: preferred_username
+      GENERIC_USER_EMAIL_ATTRIBUTE: email
+      GENERIC_USER_DISPLAY_NAME_ATTRIBUTE: name
+      GENERIC_USER_ROLE_ATTRIBUTE: litellm_role
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:4000/health/liveliness || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - litellm-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm -d litellm"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Fournisseur d'identité de DÉMONSTRATION : realm importé au démarrage, utilisateurs formateur / alice / bob.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3   # figer la version testée
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - "8180:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+
+volumes:
+  litellm-db:

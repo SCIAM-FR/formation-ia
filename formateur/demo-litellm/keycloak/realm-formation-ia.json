@@ -1,0 +1,94 @@
+{
+  "realm": "formation-ia",
+  "enabled": true,
+  "displayName": "Formation IA — démo SSO",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginTheme": "keycloak",
+  "groups": [
+    { "name": "platform-team" },
+    { "name": "equipe-produit-a" },
+    { "name": "equipe-produit-b" }
+  ],
+  "clients": [
+    {
+      "clientId": "litellm",
+      "name": "LiteLLM — interface d'administration",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "REMPLACER-PAR-KEYCLOAK_CLIENT_SECRET",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4000/sso/callback"],
+      "webOrigins": ["http://localhost:4000"],
+      "defaultClientScopes": ["openid", "profile", "email"],
+      "protocolMappers": [
+        {
+          "name": "litellm_role",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "litellm_role",
+            "claim.name": "litellm_role",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "formateur",
+      "enabled": true,
+      "email": "formateur@formation.local",
+      "emailVerified": true,
+      "firstName": "Formateur",
+      "lastName": "SCIAM",
+      "attributes": { "litellm_role": ["proxy_admin"] },
+      "groups": ["/platform-team"],
+      "credentials": [{ "type": "password", "value": "formateur", "temporary": false }]
+    },
+    {
+      "username": "alice",
+      "enabled": true,
+      "email": "alice@formation.local",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Produit A",
+      "attributes": { "litellm_role": ["internal_user"] },
+      "groups": ["/equipe-produit-a"],
+      "credentials": [{ "type": "password", "value": "alice", "temporary": false }]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "email": "bob@formation.local",
+      "emailVerified": true,
+      "firstName": "Bob",
+      "lastName": "Produit B",
+      "attributes": { "litellm_role": ["internal_user_viewer"] },
+      "groups": ["/equipe-produit-b"],
+      "credentials": [{ "type": "password", "value": "bob", "temporary": false }]
+    }
+  ]
+}
