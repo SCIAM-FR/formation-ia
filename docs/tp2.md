@@ -23,7 +23,7 @@ Fichier à compléter :
 
 | Parcours | Sections concernées | Preuve de sortie |
 | --- | --- | --- |
-| **Essentiel — 1 h 30 cible** | 1 à 5, puis 6 pour sauvegarder et corriger si nécessaire | Skill et référence installés, chargement prouvé, **une génération neuve** sans copie de TP1, build/MCP vérifiés, comparaison et limites écrites, sources sauvegardées dans le repo |
+| **Essentiel — 1 h 30 cible** | 1 à 5, puis 6 pour sauvegarder et corriger si nécessaire | Skill et référence installés, chargement prouvé, **un plan relu et approuvé dans Plannotator**, **une génération neuve** conforme au plan et sans copie de TP1, build/MCP vérifiés, comparaison et limites écrites, sources sauvegardées dans le repo |
 | **Approfondissement — hors 14 h ou si avance** | 6 : répétitions supplémentaires de robustesse | Sorties indépendantes à prompt, modèle et version du Skill identiques ; stabilité mesurée sans promesse de reproductibilité |
 
 Une régénération pour vérifier une règle corrigée après échec reste **nécessaire**,
@@ -100,13 +100,38 @@ Le dossier `tp2-skill/skills/` n'est **pas** à lui seul un chemin de découvert
 OpenCode. Utilisez l'emplacement ci-dessus, documenté dans
 [Agent Skills](https://opencode.ai/docs/skills/).
 
-## 4. Vérifier le chargement, puis générer
+## 4. Vérifier le chargement, planifier, puis générer
 
-Lancez une nouvelle session OpenCode dans `serveur-avec-skill`, avec le même modèle
-qu'au TP1 :
+Cette section ajoute une étape entre le Skill et le code : **un plan, relu et
+annoté avant toute génération**. OpenCode a deux agents primaires, `plan`, qui lit
+et propose sans écrire de fichier, et `build`, qui exécute ; on passe de l'un à
+l'autre avec la touche Tab. [Plannotator](https://docs.plannotator.ai/open-source/agents/opencode)
+ouvre le plan de l'agent `plan` dans le navigateur, vous l'annotez, et vos remarques
+reviennent à l'agent jusqu'à ce que vous l'approuviez. Comptez 15 minutes.
+
+### 4.1 Installer Plannotator dans le projet
+
+Dans `serveur-avec-skill`, créez `opencode.json` avec le plugin :
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["@plannotator/opencode@latest"]
+}
+```
+
+Le plugin se télécharge au premier lancement d'OpenCode dans ce répertoire (accès
+réseau nécessaire, à prévalider par le formateur). Il expose à l'agent `plan` un
+outil `submit_plan` ; c'est cet appel qui ouvre le navigateur. Les commandes
+`/plannotator-review`, `/plannotator-annotate` et `/plannotator-last`, installées
+par `curl -fsSL https://plannotator.ai/install.sh | bash`, sont facultatives.
+
+### 4.2 Charger le Skill, en mode plan
+
+Lancez OpenCode directement sur l'agent `plan`, avec le même modèle qu'au TP1 :
 
 ```bash
-opencode
+opencode --agent plan
 ```
 
 Demandez d'abord :
@@ -121,14 +146,71 @@ Vérifiez l'appel effectif à l'outil `skill` dans la session et l'accès à la 
 Une réponse « je connais ce Skill » ne suffit pas. Si le Skill n'est pas disponible,
 corrigez l'installation avant de continuer.
 
-Reprenez ensuite la demande métier du TP1, en remplaçant la consigne de ne pas
-utiliser de Skill par :
+### 4.3 Demander le plan
+
+Reprenez la demande métier du TP1, sans la consigne « aucun Skill », et demandez un
+plan plutôt que du code :
 
 ```text
 Utilise le Skill create-quarkus-mcp-server que tu viens de charger.
-Génère le serveur dans le répertoire courant, selon ses conventions.
-Ne consulte et ne recopie pas le serveur vanilla.
+Prépare le plan de génération du serveur MCP Quarkus pour catalogue-services.json :
+la liste des fichiers à créer avec le rôle de chacun, le package et les classes,
+la dépendance MCP et le transport retenus, les quatre primitives avec leurs noms
+publics et leurs annotations, le chargement des données et les tests prévus.
+Pour chaque choix, cite la règle du Skill ou de sa référence qui l'impose.
+Ne consulte et ne recopie pas le serveur vanilla. Soumets le plan avec submit_plan.
 ```
+
+L'agent `plan` n'écrit aucun fichier : si des fichiers apparaissent, vous n'êtes pas
+sur le bon agent. Quand il appelle `submit_plan`, Plannotator ouvre le plan dans le
+navigateur.
+
+### 4.4 Relire et annoter le plan
+
+Lisez le plan **avec les conventions sous les yeux**, ligne par ligne. Chaque point
+de la liste ci-dessous doit être présent, exact et justifié par une règle ; sinon,
+sélectionnez le passage dans Plannotator et annotez-le :
+
+| À vérifier dans le plan | Ce qui doit y figurer |
+| --- | --- |
+| Dépendance et transport | `quarkus-mcp-server-http` ; stdio seulement en option |
+| Package et classes | `com.sciam.formation.mcp` ; `CatalogueService` (données, logique) distinct de `CatalogueMcpServer` (annotations, délégation) |
+| Tools | `find_service(query)` et `get_owner(service)`, noms publics en snake_case, `@Tool(description)` et `@ToolArg(description)` |
+| Resource | `@ResourceTemplate(uriTemplate = "service://{name}")` |
+| Prompt | `fiche_service`, nom explicite |
+| Données | `catalogue-services.json` lu depuis le classpath, pas un chemin de poste |
+| Tests et logs | Un test de démarrage vérifiant l'enregistrement des primitives ; logs INFO |
+| Justification | Chaque choix renvoie à une règle du Skill ; un choix sans règle révèle un trou du Skill |
+
+Trois situations, trois réactions :
+
+- **Le plan viole une règle** (nom camelCase, classe unique, URI différente) :
+  annotez, demandez la correction, et notez que le Skill contient bien la règle.
+  Si le Skill ne la contient pas, c'est le Skill qu'il faut corriger, en section 2,
+  avant de recommencer.
+- **Le plan fait un choix que le Skill ne cadre pas** (transport, gestion du
+  service inconnu, format des retours) : c'est un écart à traiter en section 6,
+  pas une faute du modèle. Notez-le.
+- **Le plan est conforme** : approuvez. Ne demandez pas de changements pour le
+  plaisir ; un plan conforme du premier coup est un résultat, comme au TP1.
+
+Approuvez seulement quand la liste est complète. Plannotator renvoie vos annotations
+à l'agent et, à l'approbation, bascule sur l'agent `build`. Conservez le plan
+approuvé (export ou copie du texte) avec ses annotations : c'est une preuve de sortie
+du TP, au même titre que la génération.
+
+### 4.5 Générer selon le plan
+
+Sur l'agent `build`, demandez l'exécution du plan approuvé, sans le reformuler :
+
+```text
+Génère le serveur dans le répertoire courant en suivant exactement le plan approuvé
+et les conventions du Skill. Ne consulte et ne recopie pas le serveur vanilla.
+Compile et exécute les tests.
+```
+
+Tout écart entre le plan approuvé et le code produit se relève en section 5 : c'est
+une information sur le modèle, pas sur le Skill.
 
 ## 5. Comparer sur des preuves
 
@@ -169,9 +251,18 @@ sortie séparément. Ces répétitions ne sont pas requises dans les 1 h 30 esse
 Le `.gitignore` des supports exclut `.opencode/` : versionnez bien la source sous
 `tp2-skill/skills/` et sa référence sous `tp2-skill/references/`, pas uniquement la
 copie installée. Cette sauvegarde dans votre repo local fait partie de l'essentiel.
-La publication et les protections GitLab seront réalisées **au TP4, pas au TP2**.
+La publication et les protections sur la forge (GitLab ou GitHub) seront réalisées
+**au TP4, pas au TP2**.
 
 ## Dépannage
+
+| Symptôme (plan) | Action |
+| --- | --- |
+| Le navigateur ne s'ouvre pas à `submit_plan` | Plugin absent de `opencode.json`, OpenCode non relancé après l'ajout, ou premier téléchargement bloqué par le réseau |
+| L'agent écrit des fichiers pendant le plan | Vous êtes sur `build` : Tab pour revenir sur `plan`, ou relancer avec `opencode --agent plan` |
+| L'agent ne répond qu'en prose, sans `submit_plan` | Redemander explicitement « soumets le plan avec submit_plan » |
+| Le plan cite des règles absentes du Skill | Le modèle comble avec ses habitudes : bon signal pour la section 6, pas une faute à annoter |
+
 
 | Symptôme | Vérification |
 | --- | --- |
@@ -183,10 +274,16 @@ La publication et les protections GitLab seront réalisées **au TP4, pas au TP2
 
 ## Point de passage
 
-Le Skill se charge réellement, sa référence est accessible, une génération neuve
-a été construite, inspectée et comparée à TP1, et les sources du Skill et de sa
+Le Skill se charge réellement, sa référence est accessible, un plan a été relu,
+annoté si nécessaire et approuvé avant tout code, une génération neuve conforme à
+ce plan a été construite, inspectée et comparée à TP1, et les sources du Skill et de sa
 référence sont sauvegardées dans le repo. Les écarts restants et les limites de
 cette unique observation sont explicites : ne concluez pas à la répétabilité.
 Si une règle a dû être corrigée, sa vérification sur une nouvelle génération est
 requise. Conservez le chemin exact de la génération retenue pour TP3 ; si ce n'est
 plus `serveur-avec-skill`, adaptez les commandes du guide suivant.
+
+**Bonus expérimental, hors 14 h :** le Skill partage un savoir-faire, pas l'état
+d'un travail en cours. Le [TP2 Bonus]({{ '/tp2-bonus/' | relative_url }}) explore
+trois manières de transmettre le contexte d'une session OpenCode à un binôme, de
+l'export manuel à un Skill qui le publie sous une clé Redis.

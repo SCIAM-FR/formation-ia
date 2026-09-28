@@ -10,7 +10,7 @@ pas de Java à la main** : vous promptez, vous relisez, vous validez.
 
 | Parcours | Sections du guide | Preuve de sortie |
 | --- | --- | --- |
-| **Essentiel — 1 h 30 cible** | 1 à 6 | Un serveur vanilla construit et démarré, appels MCP vérifiés, comparaison avec un voisin, baseline et écarts éventuels conservés |
+| **Essentiel — 1 h 30 cible** | 1 à 7 | Un serveur vanilla construit et démarré, appels MCP vérifiés, comparaison avec un voisin, baseline et écarts éventuels conservés, serveur utilisé depuis OpenCode |
 | **Approfondissement** | 5 | Une seconde génération individuelle indépendante comparée à la première |
 
 Les approfondissements se font hors des 14 h de formation ou si vous avez de
@@ -36,6 +36,8 @@ Faites générer par OpenCode un serveur MCP Quarkus qui, sur le domaine
 2. Les deux tools, la resource paramétrée et le prompt sont exposés avec le contrat
    attendu ; un build vert ne suffit pas à le prouver.
 3. Vous vérifiez les appels avec l'inspecteur MCP du dev mode ou un client compatible.
+4. Vous branchez le serveur à OpenCode comme client MCP et vous observez l'agent
+   appeler vos tools pour répondre à une question métier, sans inventer.
 
 ## Le vrai livrable : le constat
 

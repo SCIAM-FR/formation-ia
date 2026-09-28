@@ -1,0 +1,54 @@
+# Squelette d'atelier (variante GitHub du TP4) — pas une CI clé en main.
+# Le formateur (ou le parcours autonome) remplace l'echo TODO par une génération réelle
+# depuis le Skill de la PR, puis le build/MCP et le harnais du TP3 : voir docs/TP4-GITHUB.md, sections 3 et 4.
+name: evaluer-le-skill
+
+on:
+  pull_request:
+    branches: [main]
+
+# Jeton du workflow réduit au minimum : le job lit le dépôt, il n'écrit rien.
+permissions:
+  contents: read
+
+concurrency:
+  group: evaluer-le-skill-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  evaluer-le-skill:
+    # Nom à déclarer tel quel dans « Required status checks » de la règle de branche.
+    runs-on: ubuntu-latest        # ou [self-hosted, atelier] : runner isolé, droits minimaux, jamais sur un dépôt public
+    # environment: evaluation     # à activer pour conditionner l'accès aux secrets à une approbation (contexte de confiance)
+    env:
+      # Définis dans Settings > Secrets and variables > Actions, jamais dans ce fichier.
+      # Les PR ouvertes depuis un fork ne reçoivent pas les secrets : ne pas contourner avec pull_request_target.
+      GENERATION_MODEL: ${{ vars.GENERATION_MODEL }}
+      LLM_ENDPOINT: ${{ vars.LLM_ENDPOINT }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        # Par défaut sur pull_request : le commit de fusion de la PR sur main, c'est-à-dire ce qui serait fusionné.
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # 1. Régénérer un serveur avec le Skill de CETTE pull request (OpenCode headless, version fixée)
+      - name: Générer le serveur depuis le Skill de la PR
+        run: echo "TODO atelier : installer OpenCode (version fixée), puis opencode run ... -> ./serveur-genere"
+
+      # 2. Évaluer la sortie avec le harnais de TP3 (bloque la PR si non conforme).
+      #    Pas de continue-on-error, pas de « || true » : l'échec doit rendre le check rouge.
+      - name: Évaluer avec le harnais du TP3
+        run: mvn -B -f tp3-eval/pom.xml -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
+
+      - name: Conserver les rapports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapports-evaluation
+          path: tp3-eval/target/surefire-reports/

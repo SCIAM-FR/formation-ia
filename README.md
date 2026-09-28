@@ -13,7 +13,7 @@ Il sera accessible après activation de GitHub Pages et premier déploiement.
 
 Les guides sont aussi consultables dans le dépôt :
 [accueil](docs/index.md), [préparation](docs/preparation.md),
-[TP1](docs/tp1.md), [TP2](docs/tp2.md), [TP3](docs/tp3.md), [TP4](docs/tp4.md),
+[TP1](docs/tp1.md), [TP2](docs/tp2.md), [TP2 Bonus](docs/TP-2-Bonus.md), [TP3](docs/tp3.md), [TP4](docs/tp4.md) en variantes [GitLab](docs/TP4-GITLAB.md) et [GitHub](docs/TP4-GITHUB.md),
 [fiche de sortie de l'atelier M7](docs/fiche-de-sortie.md).
 
 ## Supports et références formateur
@@ -35,7 +35,7 @@ Les guides sont aussi consultables dans le dépôt :
 | TP1 | Piloter OpenCode → serveur MCP « vanilla » | Un serveur Quarkus et des écarts éventuels constatés |
 | TP2 | Distiller le savoir-faire dans un Skill    | `skills/create-quarkus-mcp-server`       |
 | TP3 | Évaluer le Skill                           | Un harnais JUnit (assertions + grille de juge) |
-| TP4 | Gouverner le Skill                         | Repo GitLab : MR, protection, permissions |
+| TP4 | Gouverner le Skill                         | Repo GitLab ou GitHub : MR/PR, protection, permissions |
 
 Le domaine métier commun aux TP est un **catalogue de services interne**
 (voir `domaine/`). Tout est auto-contenu : aucune dépendance réseau côté domaine.
@@ -51,17 +51,17 @@ suppression répété). Ces derniers sont **hors des 14 h**, ou à faire si vous
 de l'avance sans supprimer d'étape essentielle.
 
 Ces durées sont des cibles, pas une garantie : elles supposent les accès, le modèle,
-le juge LLM et l'environnement GitLab/runner **prévalidés par le formateur avant
+le juge LLM et l'environnement forge/runner (GitLab ou GitHub) **prévalidés par le formateur avant
 la séance**. La [checklist de préparation](docs/preparation.md) précise les contrôles
 et le repli en cas d'accès manquant. Le dépôt fournit des squelettes pédagogiques,
-**pas une CI GitLab de génération prête à l'emploi**.
+**pas une CI de génération prête à l'emploi**, ni GitLab ni GitHub Actions.
 
 ## Prérequis
 
 - Lecture de Java / familiarité JVM (on relit et complète, on n'écrit pas tout à la main)
 - JDK 21+, Maven
 - OpenCode installé et **un modèle LLM câblé** (cf. note formateur — prérequis n°1 du Jour 1)
-- Fournisseur du juge et environnement GitLab d'atelier préparés pour le parcours complet
+- Fournisseur du juge et environnement d'atelier GitLab ou GitHub préparés pour le parcours complet
 
 ## Principe directeur (rappel M0)
 

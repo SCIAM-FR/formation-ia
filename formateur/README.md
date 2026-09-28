@@ -21,7 +21,7 @@ Le canevas de la fiche de sortie (M7) est publié avec les guides :
   de la version d'OpenCode et de l'extension MCP retenus pour la session : générez
   et archivez les vôtres lors de la répétition chronométrée (voir
   [`docs/preparation.md`](../docs/preparation.md)), en dehors du dépôt.
-- **Une CI GitLab prête à l'emploi.** Le YAML du TP4 reste un squelette à câbler
+- **Une CI prête à l'emploi.** Les YAML du TP4 (GitLab CI et GitHub Actions) restent des squelettes à câbler
   dans l'environnement d'atelier.
 - **Une gateway hébergée chez le client.** `demo-litellm/` tourne sur le poste du
   formateur pour une démonstration ; l'hébergement, les secrets et le SSO en

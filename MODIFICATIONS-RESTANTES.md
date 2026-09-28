@@ -113,6 +113,38 @@ du TP3, une génération OpenCode, le serveur MCP généré. Le SSO est montré 
 
 **À vérifier à l'ouverture du deck :** diapos 48 à 51.
 
+### Quatrième passe — TP1 étape OpenCode et TP2 Bonus (partage de contexte)
+
+- [x] **TP1, section 7** : tester le serveur généré depuis OpenCode comme client MCP
+  (`opencode.json`, `opencode mcp list`, appels de tools observés) ; consigne et
+  point de passage alignés.
+- [x] **TP2 Bonus** [`docs/TP-2-Bonus.md`](docs/TP-2-Bonus.md) : partage expérimental du
+  contexte d'une session OpenCode en binôme, trois pistes (export/import à la main,
+  Skill de passation, Skill + Redis avec TTL), cas adverse et tableau comparatif.
+  Hors 14 h ; renvois depuis l'index, le TP2 et le README.
+- [x] **Deck** : quatre diapos insérées après la fiche TP2 (46 à 49 ; aussi extraites dans `slides/TP2-Bonus_diapos.pptx`) (Skill ou session, trois
+  pistes, six questions avant de partager, fiche TP2 Bonus) ; sommaire ajusté.
+
+**À vérifier à l'ouverture du deck :** les quatre diapos qui suivent la fiche TP2 ;
+`opencode export/import` et l'exemple Redis avec la version d'OpenCode retenue.
+
+### Cinquième passe — TP4 en deux variantes, GitLab et GitHub
+
+- [x] **Guides** : [`docs/tp4.md`](docs/tp4.md) devient la page d'entrée (correspondance
+  des termes, exigences communes) ; l'ancien guide est renommé
+  [`docs/TP4-GITLAB.md`](docs/TP4-GITLAB.md) (`/tp4-gitlab/`) ; nouvelle variante
+  [`docs/TP4-GITHUB.md`](docs/TP4-GITHUB.md) (`/tp4-github/`) : rulesets, Code Owners par
+  équipe, workflow `pull_request`, secrets/variables Actions, Environments, mise en garde
+  `pull_request_target`, required status checks.
+- [x] **Squelettes** : [`tp4-gouvernance/.github/workflows/evaluer-le-skill.yml`](tp4-gouvernance/.github/workflows/evaluer-le-skill.yml)
+  ajouté à côté du `.gitlab-ci.yml` ; CODEOWNERS et README du dossier valables pour les deux.
+- [x] **Deck** : M6 et fiche TP4 reformulés « GitLab ou GitHub » (diapos 37, 45, 50, 69 à 73, 79) ;
+  une diapo tableau « mêmes contrôles, autres noms » insérée après la boucle de gouvernance.
+- [x] **Renvois** : index, préparation, README, plaquette (HTML et PDF régénéré), fiche de sortie.
+
+**À vérifier à l'ouverture du deck :** la diapo tableau insérée en M6 et la fiche TP4 ;
+les réglages GitHub (rulesets, Code Owners, checks requis) avec l'offre du dépôt d'atelier.
+
 ## P1 — Préparer effectivement la prochaine session
 
 Ces points relèvent de l'environnement d'atelier et de la répétition, pas du dépôt.
@@ -125,13 +157,13 @@ Ces points relèvent de l'environnement d'atelier et de la répétition, pas du 
   juge, format de réponse, quotas et budget. Prévoir un repli explicitement partiel
   si le juge est indisponible ; ne pas compter un test ignoré comme réussi.
 
-- [ ] **Préparer la vraie chaîne GitLab du TP4.** Dans l'environnement d'atelier,
+- [ ] **Préparer la vraie chaîne CI du TP4, GitLab ou GitHub selon la variante retenue.** Dans l'environnement d'atelier,
   remplacer la génération fictive, installer OpenCode, vérifier les variables
   autorisées et générer à partir du Skill de la MR. Démontrer le blocage rouge puis
   le retour au vert avant la séance. Le
-  [YAML du dépôt](tp4-gouvernance/.gitlab-ci.yml) reste un squelette, pas une CI clé en main.
+  [YAML GitLab](tp4-gouvernance/.gitlab-ci.yml) et le [workflow GitHub](tp4-gouvernance/.github/workflows/evaluer-le-skill.yml) restent des squelettes, pas une CI clé en main.
 
-- [ ] **Vérifier les droits et l'offre GitLab.** Préparer les comptes, groupes,
+- [ ] **Vérifier les droits et l'offre de la forge (GitLab ou GitHub).** Préparer les comptes, groupes ou équipes,
   runners, protections et règles d'approbation nécessaires. Si l'approbation
   obligatoire des propriétaires n'est pas disponible, documenter ce qui sera
   montré manuellement sans le présenter comme un verrou automatique.

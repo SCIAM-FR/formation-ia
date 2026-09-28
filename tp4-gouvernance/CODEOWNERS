@@ -1,2 +1,5 @@
 # La platform team possède et revoit tout changement de Skill.
+# GitLab : un groupe ou un utilisateur (@groupe). GitHub : un utilisateur ou une équipe
+# d'organisation (@organisation/equipe) disposant d'un accès en écriture au dépôt.
+# Dans les deux cas, ce fichier ne bloque rien seul : la règle de branche rend la revue obligatoire.
 /tp2-skill/skills/   @platform-team

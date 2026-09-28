@@ -21,7 +21,7 @@ Support : [consigne du TP1]({{ site.repository_url }}/blob/main/tp1-serveur-vani
 
 | Parcours | Sections concernées | Preuve de sortie |
 | --- | --- | --- |
-| **Essentiel — 1 h 30 cible** | 1 à 6 : une génération vanilla, build, démarrage, inspecteur, comparaison avec un voisin, baseline | Deux tools `find_service` / `get_owner`, resource `service://{name}`, prompt `fiche_service` observés ; appels vérifiés ; écarts éventuels et conditions conservés |
+| **Essentiel — 1 h 30 cible** | 1 à 7 : une génération vanilla, build, démarrage, inspecteur, comparaison avec un voisin, baseline, test depuis OpenCode | Deux tools `find_service` / `get_owner`, resource `service://{name}`, prompt `fiche_service` observés ; appels vérifiés ; écarts éventuels et conditions conservés ; au moins un tool appelé par OpenCode |
 | **Approfondissement — hors 14 h ou si avance** | 5 : seconde génération individuelle indépendante et nouvelle comparaison | Deux sorties séparées et variabilité documentée, sans supposer un échec |
 
 La durée suppose la préparation vérifiée ; les corrections nécessaires au
@@ -156,13 +156,103 @@ un échec**. La conformité d'une génération ne prouve pas encore sa répétab
 
 ## 6. Figer la baseline
 
-Arrêtez le dev mode avec `Ctrl+C`. Gardez ce projet intact pour la comparaison.
+Laissez le dev mode tourner : la section 7 en a besoin. Gardez ce projet intact
+pour la comparaison.
 Vous pouvez le versionner localement après avoir vérifié `.gitignore` et
 `git status` : ni `target/`, ni secrets, ni configuration personnelle ne doivent
 être ajoutés. Ne publiez rien avant cette vérification.
 
 Votre compte rendu doit contenir le prompt, les versions, les corrections demandées,
 les résultats des appels et le tableau des écarts.
+
+## 7. Tester le serveur avec OpenCode
+
+L'inspecteur a prouvé le **contrat** ; il reste à prouver qu'un **agent** s'en sert.
+OpenCode est aussi un client MCP : branchez-lui votre serveur et faites-lui répondre
+à des questions métier qu'il ne peut résoudre qu'en appelant vos tools. C'est la
+chaîne d'utilisation du fil rouge, celle que les équipes produit emprunteront.
+
+Le serveur doit tourner (`mvn quarkus:dev`). Créez un dossier client **distinct**
+du projet généré, pour ne pas modifier la baseline :
+
+```bash
+mkdir "$ATELIER_DIR/client-mcp"
+cd "$ATELIER_DIR/client-mcp"
+```
+
+Créez-y un fichier `opencode.json`, en reportant le point d'accès **documenté par
+votre projet**. Avec `quarkus-mcp-server-http`, le serveur expose par défaut le transport
+Streamable HTTP sur `http://localhost:8080/mcp` et le transport SSE historique sur
+`http://localhost:8080/mcp/sse` ; adaptez le port si vous l'avez changé.
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "serveur-vanilla": {
+      "type": "remote",
+      "url": "http://localhost:8080/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+Si le modèle a choisi **stdio**, déclarez un serveur `"type": "local"` avec la
+`"command"` documentée par le projet, par exemple `java -jar` sur l'artefact
+produit par `mvn package`. Le dev mode écrit sur la console : ne le mélangez pas
+avec un transport stdio. Le format exact est décrit dans la
+[documentation OpenCode](https://opencode.ai/docs/mcp-servers/) ; vérifiez-le pour
+la version installée.
+
+Vérifiez la connexion avant d'ouvrir une session :
+
+```bash
+opencode mcp list
+```
+
+Le serveur doit apparaître connecté. Sinon, comparez l'URL avec les logs Quarkus
+et la documentation de l'extension, et consultez `opencode mcp debug serveur-vanilla`.
+Lancez ensuite `opencode` depuis `client-mcp`, avec le même modèle qu'en section 2,
+et posez des questions qui imposent l'appel d'un tool :
+
+```text
+Quelle équipe est propriétaire du service facturation, et quelle est sa criticité ?
+Utilise uniquement les outils MCP disponibles. Si tu ne trouves pas, dis-le sans deviner.
+```
+
+```text
+Liste les services gérés par Team Catalog, avec les outils MCP disponibles.
+```
+
+```text
+Qui est propriétaire du service paiement-express ? N'invente aucune réponse.
+```
+
+OpenCode enregistre les tools sous la forme `serveur_tool`, ici
+`serveur-vanilla_get_owner` et `serveur-vanilla_find_service`. Dans la session,
+relevez pour chaque question :
+
+| À relever | Preuve attendue |
+| --- | --- |
+| Tool appelé et arguments | `get_owner` avec `service = "facturation"` ; `find_service` avec `query = "Team Catalog"` |
+| Résultat brut renvoyé par le serveur | Les mêmes valeurs qu'en section 4 : `Team Billing`, criticité `haute` ; `catalogue-produits` et `recherche` |
+| Réponse finale de l'agent | Fidèle au résultat du tool, sans propriétaire inventé pour `paiement-express` |
+
+Une réponse correcte **sans appel de tool** ne prouve rien : le modèle a pu lire
+le JSON ou improviser. Une réponse qui contredit le résultat du tool est un écart à
+noter. Si l'agent n'appelle pas le serveur, reformulez en nommant le tool ; si le
+tool est appelé mais échoue, transmettez l'erreur à la session de génération comme
+en section 3.
+
+La resource et le prompt ne sont pas forcément exposés par le client : la prise en
+charge des resources et des prompts MCP dépend de la version d'OpenCode. Ne
+concluez pas à une absence côté serveur : l'inspecteur de la section 4 reste la
+preuve pour ces deux primitives. Notez ce que le client montre et ce qu'il ignore.
+
+Ajoutez à votre compte rendu le fichier `opencode.json`, les appels de tools
+observés avec leurs arguments et le comportement sur le service inconnu. Arrêtez
+ensuite le dev mode avec `Ctrl+C`.
 
 ## Dépannage
 
@@ -173,11 +263,14 @@ les résultats des appels et le tableau des écarts.
 | Build vert, primitives absentes | Vérifier l'extension, les annotations et les listes de l'inspecteur |
 | Méthode Java présente mais nom MCP incorrect | Comparer le nom public enregistré, pas seulement le nom de méthode |
 | Modèle bloqué sur une dépendance | Lui fournir l'erreur Maven et la documentation de la version choisie |
+| `opencode mcp list` ne voit pas le serveur | Vérifier que le dev mode tourne, l'URL et le port, le transport déclaré (`remote` pour HTTP, `local` pour stdio) |
+| OpenCode répond sans appeler de tool | Reformuler en nommant le tool ; vérifier qu'il apparaît dans la liste des tools de la session |
 
 ## Point de passage
 
 Passez au TP2 lorsque les quatre primitives ont été observées, que les appels métier
-sont vérifiés, que la baseline et la comparaison avec un voisin sont conservées
-et que vous savez distinguer **fonctionnement** et **conformité**. Un tableau sans
+sont vérifiés, qu'OpenCode a appelé au moins un tool de votre serveur, que la
+baseline et la comparaison avec un voisin sont conservées et que vous savez
+distinguer **fonctionnement** et **conformité**. Un tableau sans
 écart est recevable s'il est étayé ; une seconde génération individuelle n'est pas
 requise pour ce passage.

@@ -28,7 +28,7 @@ le fil rouge de la formation ; remplacez-la par votre capacité.
 | **Propriétaire** | Une personne nommée et un suppléant, pas une équipe | Nom, adresse, suppléant | |
 | **Contrat** | Ce qui est garanti, versionné et observable de l'extérieur | Tools `find_service` / `get_owner`, resource `service://{name}`, prompt `fiche_service` ; conventions v1 | |
 | **Critères d'évaluation** | Assertions, grille, seuil ; quand on rejoue | `tp3-eval` : cinq assertions, juge ≥ 7/10 calibré par lecture humaine ; à chaque MR et à chaque changement de modèle | |
-| **Distribution / version** | Où on la trouve, comment on la référence | Dépôt GitLab, tag semver, entrée du catalogue interne | |
+| **Distribution / version** | Où on la trouve, comment on la référence | Dépôt GitLab ou GitHub, tag semver, entrée du catalogue interne | |
 | **Contrôles d'accès** | Qui peut charger, modifier, appeler ; où le contrôle s'applique | CODEOWNERS sur le Skill et le harnais ; `permission.skill` par agent ; OAuth 2.1 sur le serveur MCP | |
 | **Dépréciation** | Le test de suppression : critère, cadence, qui décide | Rejouer les cas sans une règle à chaque nouveau modèle ; retirer si les preuves tiennent ; décision du propriétaire | |
 | **Première action datée** | Un verbe, un nom, une date | Ouvrir la MR d'entrée au catalogue — nom, date | |
@@ -44,7 +44,7 @@ le fil rouge de la formation ; remplacez-la par votre capacité.
 
 Les lignes suivent le cycle de vie présenté en M7 : contribution, revue,
 distribution, dépréciation. Les contrôles d'accès reprennent les trois couches vues
-en M5 et M6 : GitLab pour les changements, OpenCode pour le chargement du Skill,
+en M5 et M6 : la forge (GitLab ou GitHub) pour les changements, OpenCode pour le chargement du Skill,
 l'authentification et l'autorisation MCP pour l'accès au serveur.
 
 ## Après la formation

@@ -31,13 +31,17 @@ services:
       GENERIC_USER_EMAIL_ATTRIBUTE: email
       GENERIC_USER_DISPLAY_NAME_ATTRIBUTE: name
       GENERIC_USER_ROLE_ATTRIBUTE: litellm_role
+      # Après « Logout » dans LiteLLM, enchaîner sur la déconnexion Keycloak (sinon la session SSO du navigateur
+      # reconnecte le même utilisateur sans mot de passe), puis revenir sur la page de connexion LiteLLM.
+      PROXY_LOGOUT_URL: "http://localhost:8180/realms/formation-ia/protocol/openid-connect/logout?client_id=litellm&post_logout_redirect_uri=http://localhost:4000/ui"
     depends_on:
       db:
         condition: service_healthy
       keycloak:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:4000/health/liveliness || exit 1"]
+      # l'image LiteLLM n'embarque pas curl : on sonde avec python
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:4000/health/liveliness', timeout=5).status == 200 else 1)"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -66,8 +70,13 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HTTP_ENABLED: "true"
+      # Émetteur (iss) des jetons figé sur l'URL vue par le navigateur : sans cela, Keycloak refuse au userinfo
+      # (appelé par LiteLLM via keycloak:8080) un jeton émis via localhost:8180 (« Invalid token issuer »).
+      KC_HOSTNAME: http://localhost:8180
       KC_HOSTNAME_STRICT: "false"
       KC_HEALTH_ENABLED: "true"
+      # Substitué dans keycloak/realm-formation-ia.json à l'import (${KEYCLOAK_CLIENT_SECRET}) : une seule source, .env
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
     volumes:
       - ./keycloak:/opt/keycloak/data/import:ro
 

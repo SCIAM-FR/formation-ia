@@ -17,14 +17,15 @@
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": false,
-      "secret": "REMPLACER-PAR-KEYCLOAK_CLIENT_SECRET",
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "redirectUris": ["http://localhost:4000/sso/callback"],
       "webOrigins": ["http://localhost:4000"],
-      "defaultClientScopes": ["openid", "profile", "email"],
+      "attributes": { "post.logout.redirect.uris": "http://localhost:4000/*" },
+      "defaultClientScopes": ["profile", "email"],
       "protocolMappers": [
         {
           "name": "litellm_role",
@@ -60,7 +61,7 @@
     {
       "username": "formateur",
       "enabled": true,
-      "email": "formateur@formation.local",
+      "email": "formateur@formation-ia.fr",
       "emailVerified": true,
       "firstName": "Formateur",
       "lastName": "SCIAM",
@@ -71,7 +72,7 @@
     {
       "username": "alice",
       "enabled": true,
-      "email": "alice@formation.local",
+      "email": "alice@formation-ia.fr",
       "emailVerified": true,
       "firstName": "Alice",
       "lastName": "Produit A",
@@ -82,7 +83,7 @@
     {
       "username": "bob",
       "enabled": true,
-      "email": "bob@formation.local",
+      "email": "bob@formation-ia.fr",
       "emailVerified": true,
       "firstName": "Bob",
       "lastName": "Produit B",

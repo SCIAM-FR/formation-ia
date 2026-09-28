@@ -25,9 +25,10 @@ téléchargement des dépendances nécessitent, eux, un accès réseau.
 | --- | --- | --- |
 | [Préparation]({{ '/preparation/' | relative_url }}) | Mon poste et mon modèle sont-ils prêts ? | Un espace de travail et un premier appel au modèle |
 | [TP1 — Générer]({{ '/tp1/' | relative_url }}) | Le modèle sait-il produire un serveur fonctionnel ? | Un serveur vanilla et un constat des écarts |
-| [TP2 — Formaliser]({{ '/tp2/' | relative_url }}) | Comment rendre la génération conforme ? | Un Skill et une nouvelle génération comparée au TP1 |
+| [TP2 — Formaliser]({{ '/tp2/' | relative_url }}) | Comment rendre la génération conforme ? | Un Skill, un plan relu et approuvé, une nouvelle génération comparée au TP1 |
+| [TP2 Bonus — Partager]({{ '/tp2-bonus/' | relative_url }}) *(expérimental, hors 14 h)* | Peut-on transmettre l'état d'une session, pas seulement le savoir-faire ? | Un contexte repris par un binôme, trois pistes comparées |
 | [TP3 — Évaluer]({{ '/tp3/' | relative_url }}) | Comment prouver que le Skill aide réellement ? | Des assertions, une grille de juge et des résultats |
-| [TP4 — Gouverner]({{ '/tp4/' | relative_url }}) | Comment faire évoluer ce savoir-faire sans régression ? | Une merge request, une CI et des règles de revue |
+| [TP4 — Gouverner]({{ '/tp4/' | relative_url }}) | Comment faire évoluer ce savoir-faire sans régression ? | Une MR ou une PR, une CI et des règles de revue ; variantes [GitLab]({{ '/tp4-gitlab/' | relative_url }}) et [GitHub]({{ '/tp4-github/' | relative_url }}) |
 
 Suivez les TP dans cet ordre : chaque livrable sert d'entrée au suivant. Les pages
 précisent les fichiers à ouvrir, les commandes à lancer, les résultats à observer et
@@ -66,7 +67,8 @@ Les modules M0 à M7 correspondent au support de présentation. Les quatre TP
 occupent **6 h 30**. Leurs guides identifient le périmètre **essentiel** et les
 preuves nécessaires pour passer à la suite. Les **approfondissements** conservent
 les exercices plus longs : seconde génération individuelle au TP1, répétitions
-de robustesse au TP2, dataset complet et mutations supplémentaires au TP3,
+de robustesse au TP2 et partage expérimental du contexte de session
+([TP2 Bonus]({{ '/tp2-bonus/' | relative_url }})), dataset complet et mutations supplémentaires au TP3,
 installation CI de zéro et test de suppression répété au TP4.
 
 Ils sont prévus **hors des 14 h**, ou si vous avez de l'avance, **sans supprimer
@@ -103,4 +105,5 @@ pas un corrigé : ils vous accompagnent pour produire et défendre vos propres c
   l'atelier M7, une capacité de votre organisation en neuf lignes.
 
 La publication de ces guides se fait sur **GitHub Pages**. La gouvernance du Skill
-en TP4 se pratique sur **GitLab** : ce sont deux usages distincts.
+en TP4 se pratique sur la forge préparée pour l'atelier, **GitLab ou GitHub** selon
+la variante du guide : ce sont deux usages distincts.

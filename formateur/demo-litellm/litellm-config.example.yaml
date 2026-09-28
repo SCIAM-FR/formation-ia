@@ -8,26 +8,30 @@ model_list:
   # modèles gratuits), /messages (Claude, Qwen — format Anthropic) et /responses (GPT, Grok — Responses API).
   # LiteLLM ne connaît pas les prix de Zen : ils sont renseignés dans model_info pour que la dépense soit juste.
   # Tarifs relevés le 25 sept. 2026 sur opencode.ai/docs/zen — à vérifier avant la démo.
+  # Attention : la doc Zen et l'API divergent (27 sept. 2026) : deepseek-v4-pro et kimi-k2.7-code renvoient 404 sur
+  # /chat/completions, deepseek-v4-flash n'existe plus (v4.1-flash le remplace). Vérifiés OK : glm-5.3, glm-5.3-flash,
+  # deepseek-v4.1-flash, minimax-m3 (chat/completions) ; claude-opus-5-5, claude-haiku-4-5 (messages).
+  # Tester chaque alias par un appel réel avant la démo (README, étape 2).
 
   - model_name: modele-generation          # alias vu par OpenCode — un modèle Zen de la démo, pas forcément celui des TP
     litellm_params:
-      model: openai/deepseek-v4-pro        # préfixe openai/ = format chat/completions
+      model: openai/glm-5.3                # préfixe openai/ = format chat/completions
       api_base: https://opencode.ai/zen/v1
       api_key: os.environ/OPENCODE_API_KEY
     model_info:
       access_groups: ["atelier"]
-      input_cost_per_token: 0.00000174     # 1,74 $ / M tokens
-      output_cost_per_token: 0.00000348    # 3,48 $ / M tokens
+      input_cost_per_token: 0.0000014      # 1,40 $ / M tokens
+      output_cost_per_token: 0.0000044     # 4,40 $ / M tokens
 
   - model_name: modele-juge                # alias utilisé par tp3-eval (LLM_MODEL) — bon marché, suffisant pour une grille
     litellm_params:
-      model: openai/deepseek-v4-flash
+      model: openai/glm-5.3-flash
       api_base: https://opencode.ai/zen/v1
       api_key: os.environ/OPENCODE_API_KEY
     model_info:
       access_groups: ["atelier", "ci"]
-      input_cost_per_token: 0.00000014     # 0,14 $ / M
-      output_cost_per_token: 0.00000028    # 0,28 $ / M
+      input_cost_per_token: 0.00000015     # 0,15 $ / M
+      output_cost_per_token: 0.0000005      # 0,50 $ / M
 
   # Modèle volontairement NON autorisé aux équipes produit : sert à montrer un refus pendant la démo.
   # Claude passe par l'endpoint Anthropic de Zen : préfixe anthropic/, api_base SANS /v1 (LiteLLM ajoute /v1/messages).
@@ -65,8 +69,10 @@ litellm_settings:
   # num_retries: 2
 
 # Dernière étape de la démo — exposer le serveur MCP du fil rouge derrière la gateway (MCP gateway).
-# Le serveur Quarkus généré (mvn quarkus:dev sur le poste) doit être joignable depuis le conteneur
-# (host.docker.internal). L'accès par clé/équipe se règle ensuite dans l'interface ou via l'API.
+# Préférer la déclaration par l'API (POST /v1/mcp/server) ou l'interface (MCP Servers) au YAML : les permissions
+# par équipe (object_permission.mcp_servers) référencent l'identifiant attribué par la gateway. Voir README,
+# « Commandes prêtes », bloc MCP. La forme YAML ci-dessous reste valable pour un serveur ouvert à tous.
+# Le serveur Quarkus (mvn quarkus:dev sur le poste) est vu depuis le conteneur sous host.docker.internal.
 # mcp_servers:
 #   catalogue:
 #     url: "http://host.docker.internal:8080/mcp"   # relever le point d'accès réel exposé par le serveur généré

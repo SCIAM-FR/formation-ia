@@ -18,10 +18,11 @@ Les participants y vérifient leurs accès ; ils n'y installent pas toute la cha
 | --- | --- |
 | Postes, JDK/Maven, dépendances et inspection MCP | Build, démarrage et appels MCP sur l'environnement d'atelier ; dépendances accessibles |
 | OpenCode et modèle de génération autorisé | Version fixée, authentification et réponse réelle ; profil vanilla sans Skill préchargé |
+| Plannotator pour la revue de plan (TP2) | Plugin `@plannotator/opencode` téléchargé une fois dans un projet d'essai (accès npm), `submit_plan` ouvrant bien le navigateur sur un poste représentatif |
 | Fournisseur du juge TP3 | Endpoint Chat Completions, modèle, clé et quota autorisés ; appel réel avec JSON exploitable par le client Java |
-| Projet GitLab, comptes et offre | Accès participants, droits de protection de `main`, possibilités de revue CODEOWNERS identifiées |
-| Runner et environnement OpenCode | Job de MR exécuté dans un environnement isolé ; Java/Maven et OpenCode disponibles |
-| Modèles et secrets CI autorisés | Génération et juge accessibles dans le contexte de MR de confiance retenu, sans exposer les clés aux contributions non fiables |
+| Projet GitLab ou dépôt GitHub, comptes et offre | Variante du TP4 choisie ; accès participants, droits de protection de `main`, possibilités de revue CODEOWNERS identifiées |
+| Runner et environnement OpenCode | Job de MR ou de PR exécuté dans un environnement isolé ; Java/Maven et OpenCode disponibles |
+| Modèles et secrets CI autorisés | Génération et juge accessibles dans le contexte de MR ou de PR de confiance retenu, sans exposer les clés aux contributions non fiables |
 | Démonstration LiteLLM (M5), sur le poste formateur | Gateway locale démarrée, alias et équipes créés, juge du TP3 et serveur MCP du fil rouge passés à travers, refus et journal vérifiés, capture vidéo de secours ([`formateur/demo-litellm/`]({{ site.repository_url }}/tree/main/formateur/demo-litellm)) |
 | Chaîne de génération TP4 | Génération neuve depuis le Skill du checkout de la MR, preuve de chargement, build et évaluation réels ; échec bloquant et rapports conservés |
 
@@ -42,7 +43,7 @@ séance devra utiliser **leurs versions** issues de la MR, pas un serveur préfa
 démonstration sur un environnement autorisé en indiquant ce que les participants
 n'ont pas pu vérifier. Sans juge, les assertions peuvent avancer, mais TP3 reste
 **partiel et non validé** tant que le verdict n'a pas été calibré avec une lecture
-humaine. Sans génération réelle ou sans preuve de blocage GitLab, TP4 reste partiel.
+humaine. Sans génération réelle ou sans preuve de blocage sur la forge, TP4 reste partiel.
 Ne remplacez pas ces preuves par un statut vert, un `echo` ou des tests désactivés.
 
 ## Périmètre de préparation
@@ -60,9 +61,10 @@ Ne remplacez pas ces preuves par un statut vert, un `echo` ou des tests désacti
 | JDK 21 ou supérieur | `java -version` | Une version au moins égale à 21 |
 | Maven | `mvn -version` | Maven disponible et utilisant le bon JDK |
 | OpenCode | `opencode --version` | Le CLI répond |
+| Plannotator, pour TP2 | Un `opencode.json` avec le plugin `@plannotator/opencode@latest` dans un dossier d'essai, puis `opencode --agent plan` | Le plugin se charge sans erreur au démarrage |
 | Modèle LLM | Un message dans OpenCode | Une vraie réponse, sans erreur d'authentification |
 | Juge LLM, pour TP3 | Configuration validée avec le formateur | Endpoint compatible, modèle et secret autorisés disponibles |
-| GitLab, pour TP4 | Accès au projet d'atelier | Droits suffisants pour gérer branche protégée, CI et revue |
+| GitLab ou GitHub, pour TP4 | Accès au projet d'atelier, selon la variante retenue | Droits suffisants pour gérer branche protégée, CI et revue |
 
 Installez les outils manquants avec les instructions de votre environnement.
 La [documentation OpenCode](https://opencode.ai/docs/) décrit l'installation et
@@ -154,6 +156,6 @@ N'envoyez que les données fictives de cet atelier au fournisseur autorisé.
 
 Vous pouvez passer au TP1 si Java et Maven utilisent un JDK compatible, si OpenCode
 répond avec le modèle retenu et si les deux chemins de travail sont définis.
-Les accès au juge et à GitLab ainsi que le runner doivent déjà avoir été prévalidés
+Les accès au juge et à la forge (GitLab ou GitHub) ainsi que le runner doivent déjà avoir été prévalidés
 par le formateur pour tenir le parcours complet. Signalez dès l'accueil tout écart
 avec cette préparation ; n'attendez pas TP3 ou TP4 pour découvrir un accès manquant.
