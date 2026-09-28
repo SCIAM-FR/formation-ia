@@ -2,6 +2,14 @@
   {
     "id": "happy-1",
     "demande": "Crée un serveur MCP Quarkus pour le catalogue de services : tools find_service et get_owner, resource service://{name}, prompt fiche_service.",
-    "attendu": "Serveur conforme aux conventions maison."
+    "attendu": {
+      "contrat": {
+        "tools": ["find_service", "get_owner"],
+        "resource": "service://{name}",
+        "prompt": "fiche_service"
+      },
+      "conventions": "toutes",
+      "commentaire": "Demande explicite des quatre primitives : le contrat vient de la demande, les conventions viennent du Skill. Les deux doivent être tenus."
+    }
   }
 ]

@@ -164,8 +164,14 @@ cp tp2-skill/references/conventions-quarkus-mcp.md \
 test -f serveur-genere/pom.xml
 mvn -B -f serveur-genere/pom.xml test
 mvn -B -f tp3-eval/pom.xml \
-  -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
+  -Dcas=happy-1 -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
 ```
+
+`-Dcas=happy-1` charge le **contrat attendu** du cas `happy-1` : les noms de tools,
+la resource et le prompt que la demande impose. Le prompt de génération ci-dessus
+est précisément cette demande ; si vous changez le prompt de la CI, changez le cas,
+ou le harnais vérifiera un contrat qui n'a pas été demandé. Sans `-Dcas`, seules
+les conventions du Skill et le juge s'exécutent.
 
 Cet extrait illustre la génération, le build et l'appel au harnais : il ne constitue
 pas un job complet et ne vérifie pas le démarrage ni les appels MCP. Le formateur

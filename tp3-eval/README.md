@@ -21,19 +21,28 @@ Le fournisseur du juge doit être préparé avant séance pour le parcours compl
 
 ## Fourni (ne pas réécrire)
 - `GeneratedProject` — lit le POM et les sources du serveur généré.
+- `CasAttendu` — lit le cas du dataset désigné par `-Dcas=<id>` et son `attendu`.
+- `ContratDemandeTest` — **le contrat de la demande** (noms de tools, resource,
+  prompt attendus par le cas) ; ignoré sans `-Dcas`.
 - `JugeLLM` — client LLM-as-a-Judge agnostique (endpoint/clé/modèle via env).
-- `ConformiteDeterministeTest` — un scorer exemple + des stubs `@Test` à compléter.
+- `ConformiteDeterministeTest` — **les conventions du Skill** : un scorer exemple
+  + quatre stubs `@Test` à compléter, sans citer de nom du catalogue.
 - `ConformiteJugeTest` — l'appel au juge est câblé ; **la grille est à écrire**.
-- `dataset/` — cas happy / realistic / adverse.
+- `dataset/` — cas happy / realistic / adverse, chacun avec un `attendu` structuré
+  (`contrat` + `conventions` + `commentaire`).
 
 ## À écrire (vous)
-- Les quatre stubs d'assertions déterministes (`// TODO`) : deux tools, resource,
-  séparation. Ne désactivez aucun test ; examinez aussi le scorer exemple.
+- Les quatre stubs de conventions (`// TODO`) : snake_case des tools, descriptions,
+  resource paramétrée, séparation métier/adaptateur. Ne désactivez aucun test ;
+  examinez aussi le scorer exemple et le contrat fourni.
 - La grille (rubric) du LLM-as-a-Judge.
 
 ## Lancer
     export LLM_ENDPOINT=...  LLM_API_KEY=...  LLM_MODEL=...
-    mvn -Dserveur.genere.dir=/chemin/vers/le/serveur/genere test
+    mvn -Dcas=happy-1 -Dserveur.genere.dir=/chemin/vers/le/serveur/genere test
+
+`-Dcas` sélectionne le contrat attendu (celui de la demande jouée) ; sans lui, seules
+les conventions et le juge s'exécutent.
 
 Le juge (`ConformiteJugeTest`) ne s'active que si `LLM_ENDPOINT` est défini.
 Sans juge exécuté et calibré, le TP est **partiel et non validé**.

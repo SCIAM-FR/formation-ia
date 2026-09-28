@@ -37,10 +37,23 @@ d'allonger la durée cible ; ne désactivez aucun test pour la tenir.
 | Fichier | Rôle | Travail demandé |
 | --- | --- | --- |
 | `GeneratedProject.java` | Lit le `pom.xml` et les sources Java du projet cible | Lire son API, ne pas réécrire la plomberie |
-| `ConformiteDeterministeTest.java` | Exemple de scorer et quatre tests en échec volontaire | Remplacer les `fail("À écrire…")` par des assertions |
+| `ConformiteDeterministeTest.java` | **Conventions du Skill** : un exemple de scorer et quatre tests en échec volontaire, valables pour n'importe quel domaine | Remplacer les `fail("À écrire…")` par des assertions |
+| `CasAttendu.java` | Lit le cas du dataset désigné par `-Dcas=<id>` et son champ `attendu` | Lire son API, ne pas réécrire la plomberie |
+| `ContratDemandeTest.java` | **Contrat de la demande** : vérifie les noms que la demande impose (tools, resource, prompt), d'après `attendu.contrat` du cas ; ignoré sans `-Dcas` | Lire ; comparer avec vos assertions de conventions |
 | `JugeLLM.java` | Appelle un endpoint compatible Chat Completions | Comprendre la configuration, ne pas le réécrire |
 | `ConformiteJugeTest.java` | Envoie les sources Java au juge et impose une note minimale | Compléter et pondérer la grille |
-| `src/test/resources/dataset/` | Cinq demandes réparties en trois catégories | Lire les catégories ; une demande adverse mutualisée si raisonnable, ensemble des cas en approfondissement |
+| `src/test/resources/dataset/` | Cinq demandes en trois catégories, chacune avec un `attendu` structuré : `contrat` (noms attendus) et `conventions` | Lire les catégories ; une demande adverse mutualisée si raisonnable, ensemble des cas en approfondissement |
+
+Deux familles de vérifications, à ne pas confondre :
+
+- **Les conventions du Skill** ne citent aucun nom du catalogue : snake_case pour
+  tous les tools, descriptions partout, resource paramétrée, séparation métier /
+  adaptateur. Elles doivent rester vertes sur un serveur conforme pour un autre
+  domaine. C'est ce que **vous écrivez**.
+- **Le contrat de la demande** cite les noms : `find_service`, `get_owner`,
+  `service://{name}`, `fiche_service`. Il vient de la demande, pas du Skill ; un
+  serveur qui le respecte prouve que le modèle a lu la demande. Il est **fourni**,
+  paramétré par le cas (`-Dcas=happy-1`), et sert de référence pour vos regex.
 
 > Le harnais **ne génère pas** le serveur, **ne le compile pas**, **ne le démarre
 > pas** et **ne parcourt pas automatiquement** les fichiers du dataset. Il inspecte
@@ -50,11 +63,16 @@ d'allonger la durée cible ; ne désactivez aucun test pour la tenir.
 Les commandes ci-dessous ciblent la génération retenue au TP2. Si vous avez dû
 régénérer ailleurs, remplacez `serveur-avec-skill` par son chemin exact. Conservez
 sa provenance (prompt, modèle, version du Skill, dossier) : elle ne devient pas
-le cas `happy-1` simplement parce qu'elle expose les quatre primitives.
+le cas `happy-1` simplement parce qu'elle expose les quatre primitives. En
+revanche, sa demande est celle de `happy-1` : `-Dcas=happy-1` charge le bon contrat
+sans en faire une exécution du dataset.
 
 `sourceJava()` concatène tous les fichiers `.java`, y compris les tests du projet
 cible. `sourceContient(regex)` applique une regex multiligne à cette concaténation :
 une chaîne dans un commentaire ou un test peut donc tromper un scorer trop permissif.
+Si vous retirez les commentaires avant de chercher, préservez les chaînes de
+caractères : `service://{name}` contient `//`, et un `//[^\n]*` naïf le tronque.
+`ContratDemandeTest.sansCommentaires` montre une manière de faire.
 
 ## 2. Exécuter le point de départ
 
@@ -62,13 +80,16 @@ Commencez sans appel LLM, avec un chemin absolu :
 
 ```bash
 cd "$FORMATION_REPO/tp3-eval"
-mvn -Dtest=ConformiteDeterministeTest \
+mvn -Dtest='ConformiteDeterministeTest,ContratDemandeTest' -Dcas=happy-1 \
   -Dserveur.genere.dir="$ATELIER_DIR/serveur-avec-skill" test
 ```
 
 Résultat attendu **avant votre travail** : l'exemple sur la dépendance peut passer,
-mais les quatre tests à compléter échouent avec « À écrire… ». C'est intentionnel,
-pas un défaut à masquer. Les rapports sont sous `target/surefire-reports/`.
+le contrat de la demande passe si votre serveur expose bien les quatre primitives,
+mais les quatre tests de conventions à compléter échouent avec « À écrire… ».
+C'est intentionnel, pas un défaut à masquer. Les rapports sont sous
+`target/surefire-reports/`. Si le contrat échoue, c'est un défaut de génération :
+retour au TP2, pas d'assouplissement.
 
 Le répertoire cible doit contenir le `pom.xml` du serveur. La valeur par défaut
 `../serveur-genere` ne correspond pas à l'organisation de cet atelier : fournissez
@@ -80,14 +101,18 @@ Complétez les quatre tests existants, sans les désactiver :
 
 | Test | Ce qu'il doit distinguer |
 | --- | --- |
-| `expose_tool_find_service` | Un tool effectivement nommé `find_service`, pas une simple occurrence de texte |
-| `expose_tool_get_owner` | Un tool effectivement nommé `get_owner` |
-| `resource_suit_le_gabarit_uri` | Un template de resource portant exactement `service://{name}` |
-| `separe_metier_et_adaptateur` | Deux classes distinctes avec des responsabilités réellement séparées |
+| `tools_nommes_en_snake_case` | Tous les noms publics de tools en snake_case, qu'ils viennent de l'attribut `name` ou du nom de méthode ; un seul `findService` doit faire échouer, dans n'importe quel domaine |
+| `tools_et_arguments_decrits` | Une description sur chaque `@Tool` et chaque `@ToolArg`, et une définition de ce qu'est une description acceptable |
+| `resource_template_parametree_et_decrite` | Au moins une `@ResourceTemplate` dont l'URI porte un paramètre, avec un `@ResourceTemplateArg` décrit ; l'URI exacte relève du contrat |
+| `separe_metier_et_adaptateur` | Une classe métier qui charge les données, distincte de l'adaptateur qui porte les annotations et délègue |
 
-Commencez avec les méthodes de `GeneratedProject`. Formulez des messages d'échec
-qui indiquent **la convention attendue**. Attention : une méthode Java camelCase
-peut exposer un nom MCP snake_case via l'annotation ; vérifiez le contrat public.
+Commencez avec les méthodes de `GeneratedProject` et lisez `ContratDemandeTest`
+pour la manière d'exiger l'annotation et le nom sur la même déclaration. Formulez
+des messages d'échec qui indiquent **la convention attendue**. Attention : une
+méthode Java camelCase peut exposer un nom MCP snake_case via l'annotation, et
+l'inverse ; vérifiez le nom public. Interdit : recopier `find_service` ou
+`service://{name}` dans une convention — si votre assertion ne tient que pour le
+catalogue, c'est un contrat, pas une convention.
 
 L'exemple fourni vérifie seulement la présence de `quarkus-mcp-server` dans le POM.
 Il ne prouve ni le transport HTTP ni les coordonnées exactes. **Dans l'essentiel**,
@@ -114,9 +139,10 @@ cp -R "$ATELIER_DIR/serveur-avec-skill" \
 ```
 
 Dans cette copie, choisissez **une mutation pour l'essentiel** parmi les exemples
-ci-dessous : renommez le nom MCP d'un tool, changez le template URI ou déplacez
-une responsabilité métier dans l'adaptateur. Relancez les tests déterministes
-avec le chemin de cette copie, en conservant le même sélecteur qu'en section 2.
+ci-dessous : renommez le nom MCP d'un tool en camelCase, retirez une description,
+changez le template URI ou déplacez une responsabilité métier dans l'adaptateur.
+Relancez les tests avec le chemin de cette copie, en conservant le sélecteur et le
+`-Dcas` de la section 2 : vous verrez quelle famille détecte quoi.
 
 Le test correspondant doit devenir rouge avec un message pertinent. Rétablissez
 manuellement ce changement et relancez les tests pour prouver le retour au **vert**.
@@ -129,9 +155,10 @@ la fois, sur une copie restaurée ou une nouvelle copie, sans désactiver de tes
 
 | Mutation | Test censé échouer | Résultat observé |
 | --- | --- | --- |
-| Nom public `findService` au lieu de `find_service` | Tool `find_service` | À relever |
-| URI `catalogue://{name}` | Gabarit de resource | À relever |
-| Chargement JSON déplacé dans l'adaptateur | Séparation métier/MCP | À relever |
+| Nom public `findService` au lieu de `find_service` | Convention `tools_nommes_en_snake_case` **et** contrat `tools_de_la_demande_exposes` : la convention le verrait dans n'importe quel domaine, le contrat seulement ici | À relever |
+| Description retirée d'un `@ToolArg` | Convention `tools_et_arguments_decrits` ; le contrat reste vert | À relever |
+| URI `catalogue://{name}` | Contrat `resource_de_la_demande_exposee` ; la convention reste verte si l'URI est encore paramétrée | À relever |
+| Chargement JSON déplacé dans l'adaptateur | Convention `separe_metier_et_adaptateur` | À relever |
 
 ## 5. Rédiger la grille du juge
 
@@ -232,15 +259,23 @@ Créez un projet neuf sous `evaluations/<id>/`, copiez le catalogue
 et installez le Skill avec sa référence comme au TP2. Ouvrez une nouvelle session
 avec le modèle fixé. Chargez le Skill, puis transmettez le champ `demande`,
 en précisant que le catalogue local est la source de données. Ne transmettez pas
-le champ `attendu` : il sert à l'évaluateur.
+le champ `attendu` : il sert à l'évaluateur. Lisez-le, vous : son `contrat` dit
+quels noms la demande impose (aucun pour `realistic-2`), et son `commentaire` dit
+ce que le cas cherche à mesurer.
 
 Construisez le projet avec `mvn test`, vérifiez son contrat MCP, puis lancez le
-harnais sur ce projet. Exemple après génération de `happy-1` :
+harnais sur ce projet **avec l'identifiant du cas**, pour que le contrat vérifié
+soit celui de la demande jouée. Exemple après génération de `adverse-2` :
 
 ```bash
 cd "$FORMATION_REPO/tp3-eval"
-mvn -Dserveur.genere.dir="$ATELIER_DIR/evaluations/happy-1" test
+mvn -Dcas=adverse-2 -Dserveur.genere.dir="$ATELIER_DIR/evaluations/adverse-2" test
 ```
+
+Sur `adverse-2`, la demande réclame `findService` en camelCase ; le contrat attendu
+reste `find_service`. Si le contrat échoue mais que la convention snake_case passe,
+le modèle a inventé un troisième nom ; si les deux échouent, il a obéi à la demande
+contre le Skill. Les deux lectures sont des résultats.
 
 Les résultats Surefire sont remplacés à chaque exécution : archivez-les avec les
 sources et les conditions du cas avant de passer au suivant. Relevez :
@@ -264,12 +299,15 @@ le scorer pour le faire passer.
 | --- | --- |
 | « Projet généré introuvable » | Chemin absolu erroné ou génération non faite |
 | Échecs « À écrire » | Stubs encore présents |
+| `Cas introuvable dans le dataset` | Faute de frappe dans `-Dcas` ; ids : `happy-1`, `realistic-1`, `realistic-2`, `adverse-1`, `adverse-2` |
+| Contrat rouge sur un serveur qui marche | La demande imposait un nom que le serveur n'expose pas sous ce nom public : défaut de génération, pas de scorer |
 | Juge ignoré | `LLM_ENDPOINT` absent ou vide ; noter « non exécuté » |
 | Erreur HTTP, JSON ou délai du juge | Endpoint complet, modèle, clé, quota, compatibilité du format |
 | Assertions vertes sur un projet cassé | Regex trop large, occurrence dans un commentaire ou un test |
 | Erreur de compilation Java 21 | JDK réellement utilisé par Maven ; en cas de plugin ancien, fixer sa version avec le formateur |
 
-Le passage validé au TP4 demande les **quatre stubs complétés**, l'exemple examiné,
+Le passage validé au TP4 demande les **quatre conventions écrites**, l'exemple et
+le contrat fourni examinés,
 **une mutation rouge puis sa correction verte**, une grille écrite et **un premier
 verdict LLM calibré par une lecture humaine sur la génération TP2**. Conservez
 séparément les preuves du build/MCP et celles du harnais. Mutualisez le cas adverse

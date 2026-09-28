@@ -17,8 +17,9 @@ import java.util.stream.Stream;
  */
 final class ScorerRobusteExemple {
 
-    private static final Pattern COMMENTAIRES =
-        Pattern.compile("/\\*.*?\\*/|//[^\\n]*", Pattern.DOTALL);
+    /** Commentaires bloc et ligne, en préservant les chaînes : « service://{name} » contient « // ». */
+    private static final Pattern COMMENTAIRES_OU_CHAINES =
+        Pattern.compile("\"(?:\\\\.|[^\"\\\\])*\"|/\\*.*?\\*/|//[^\\n]*", Pattern.DOTALL);
 
     /** Sources de production seulement, commentaires retirés. */
     static String sourceMainSansCommentaires(Path racine) {
@@ -26,7 +27,11 @@ final class ScorerRobusteExemple {
             StringBuilder sb = new StringBuilder();
             s.filter(f -> f.toString().endsWith(".java"))
              .forEach(f -> sb.append(lire(f)).append('\n'));
-            return COMMENTAIRES.matcher(sb).replaceAll(" ");
+            java.util.regex.Matcher m = COMMENTAIRES_OU_CHAINES.matcher(sb);
+            StringBuilder sans = new StringBuilder();
+            while (m.find()) m.appendReplacement(sans, java.util.regex.Matcher.quoteReplacement(m.group().startsWith("\"") ? m.group() : " "));
+            m.appendTail(sans);
+            return sans.toString();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

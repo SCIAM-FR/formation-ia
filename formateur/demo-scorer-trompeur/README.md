@@ -23,21 +23,22 @@ ce n'est pas nécessaire, **le harnais ne lit que du texte**.
 
    ```java
    @Test
-   void expose_tool_find_service_naif() {
+   void contrat_find_service_naif() {
        assertTrue(projet.sourceContient("find_service"));
    }
    ```
 
-   Lancez-le sur le piège :
+   Lancez-le sur le piège. Avec le scorer naïf, le test est **vert**. Demandez à la
+   salle si le serveur expose le tool. Non. Puis lancez le contrat fourni :
 
    ```bash
    cd tp3-eval
-   mvn -Dtest=ConformiteDeterministeTest \
+   mvn -Dtest=ContratDemandeTest -Dcas=happy-1 \
      -Dserveur.genere.dir="$FORMATION_REPO/formateur/demo-scorer-trompeur/projet-piege" test
    ```
 
-   Avec le scorer naïf, le test est **vert**. Demandez à la salle si le serveur
-   expose le tool. Non.
+   Rouge sur `find_service` et `get_owner` : le contrat fourni exige l'annotation et
+   le nom public sur la même déclaration.
 
 2. **Pourquoi.** Ouvrez `CatalogueMcpServer.java` et le test : le nom apparaît
    dans un commentaire, dans un log et dans un nom de méthode de test.
@@ -46,8 +47,11 @@ ce n'est pas nécessaire, **le harnais ne lit que du texte**.
 
 3. **La parade.** Exiger l'annotation **et** le nom public sur la même déclaration,
    après suppression des commentaires, en ignorant `src/test`. Voir
-   [`ScorerRobusteExemple.java`](ScorerRobusteExemple.java). Relancez : **rouge**
-   sur le piège, **vert** sur une génération conforme.
+   [`ScorerRobusteExemple.java`](ScorerRobusteExemple.java) et, dans le harnais,
+   `ContratDemandeTest.exposeTool`. Relancez : **rouge** sur le piège, **vert** sur
+   une génération conforme. Faites remarquer au passage que le piège passe la
+   convention snake_case (« chercher » est un nom valide) : c'est le contrat de la
+   demande qui le détecte, pas une convention du Skill — les deux familles servent.
 
 4. **Le message.** Un scorer n'est crédible qu'après avoir prouvé qu'il sait
    échouer (section 4 du TP3, mutation contrôlée). Un vert qui ne peut pas devenir
