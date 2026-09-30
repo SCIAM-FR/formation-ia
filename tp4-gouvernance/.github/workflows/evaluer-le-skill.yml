@@ -44,7 +44,7 @@ jobs:
       # 2. Évaluer la sortie avec le harnais de TP3 (bloque la PR si non conforme).
       #    Pas de continue-on-error, pas de « || true » : l'échec doit rendre le check rouge.
       - name: Évaluer avec le harnais du TP3
-        run: mvn -B -f tp3-eval/pom.xml -Dcas=happy-1 -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
+        run: mvn -B -f tp3-eval/pom.xml -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
 
       - name: Conserver les rapports
         if: always()

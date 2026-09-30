@@ -25,7 +25,7 @@ sont les mêmes. Suivez une seule variante.
 | --- | --- | --- |
 | **Préparation formateur, avant séance** | 1, 3 et 4 | Projet ou dépôt, runner, environnement OpenCode, modèles et secrets autorisés prévalidés ; vraie génération et évaluation en CI |
 | **Essentiel — 1 h 30 cible** | 1 à 6 ; protocole en 7 | `main` protégé, MR ou PR et revue selon l'offre, génération réelle de la MR/PR évaluée, blocage rouge puis retour vert, chargement Skill allow/deny prouvé |
-| **Approfondissement** | 3 et 4 depuis zéro ; 3, 6 et 7 pour aller plus loin | Installation CI autonome, dataset multi-cas, diagnostics et test de suppression répété |
+| **Approfondissement** | 3 et 4 depuis zéro ; 3, 6 et 7 pour aller plus loin | Installation CI autonome, plusieurs générations, diagnostics et test de suppression répété |
 
 Les approfondissements sont hors des 14 h ou si avance, sans supprimer l'essentiel.
 La plomberie CI et les secrets se préparent avant la séance ; les participants

@@ -1,0 +1,97 @@
+# Service de comptage Envoy « ratelimit » + Redis : limites de requêtes PAR ÉQUIPE et budget de tokens par clé.
+# agentgateway envoie des descripteurs (team, user_id) ; les seuils vivent ici, dans la ConfigMap.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ratelimit
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ratelimit-config
+  namespace: ratelimit
+data:
+  config.yaml: |
+    domain: formation-ia
+    descriptors:
+      # Requêtes par minute, par équipe (descripteur « team » = metadata.group de la clé virtuelle)
+      - key: team
+        value: equipe-produit-a
+        rate_limit: { unit: minute, requests_per_unit: 30 }
+      - key: team
+        value: equipe-produit-b
+        rate_limit: { unit: minute, requests_per_unit: 30 }
+      - key: team
+        value: ci-usine
+        rate_limit: { unit: minute, requests_per_unit: 20 }
+      - key: team
+        rate_limit: { unit: minute, requests_per_unit: 60 }
+      # Budget de TOKENS par jour pour la clé de démonstration : dérisoire, pour montrer un refus 429 sans attendre.
+      # Les autres clés n'ont pas d'entrée « user_id » : pas de plafond de tokens (les prix se lisent au journal).
+      - key: user_id
+        value: demo-budget-epuise
+        rate_limit: { unit: day, requests_per_unit: 20 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: ratelimit
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: redis } }
+  template:
+    metadata: { labels: { app: redis } }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports: [{ containerPort: 6379 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: ratelimit
+spec:
+  selector: { app: redis }
+  ports: [{ port: 6379 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratelimit
+  namespace: ratelimit
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ratelimit } }
+  template:
+    metadata: { labels: { app: ratelimit } }
+    spec:
+      containers:
+        - name: ratelimit
+          image: envoyproxy/ratelimit:master   # figer un tag ou un digest pour la session
+          command: ["/bin/ratelimit"]
+          env:
+            - { name: REDIS_SOCKET_TYPE, value: tcp }
+            - { name: REDIS_URL, value: "redis:6379" }
+            - { name: RUNTIME_ROOT, value: /data }
+            - { name: RUNTIME_SUBDIRECTORY, value: ratelimit }
+            - { name: RUNTIME_WATCH_ROOT, value: "false" }
+            - { name: USE_STATSD, value: "false" }
+            - { name: LOG_LEVEL, value: debug }   # journalise chaque descripteur reçu : pratique pour la démo
+          ports: [{ containerPort: 8081, name: grpc }]
+          volumeMounts:
+            - { name: config, mountPath: /data/ratelimit/config/config.yaml, subPath: config.yaml }
+      volumes:
+        - name: config
+          configMap: { name: ratelimit-config }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ratelimit
+  namespace: ratelimit
+spec:
+  selector: { app: ratelimit }
+  ports: [{ name: grpc, port: 8081, targetPort: 8081 }]

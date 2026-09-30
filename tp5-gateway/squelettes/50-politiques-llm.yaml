@@ -1,0 +1,21 @@
+# SQUELETTE sections 3, 5 et 6 — LA politique de l'écouteur LLM. Une seule : deux politiques sur la même cible
+# qui posent le même champ s'écrasent en silence.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayPolicy
+metadata:
+  name: llm-cles-et-limites
+  namespace: agentgateway-system
+spec:
+  targetRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  traffic:
+    apiKeyAuthentication:
+      mode: REMPLACER                   # TODO section 3 — Strict, Optional ou Permissive ? Justifiez.
+      configMapSelector:
+        matchLabels: { tp5/cles-virtuelles: "true" }
+    # TODO section 6 — rateLimit.global : domaine « tp5 », backendRef vers le Service ratelimit (namespace ratelimit, port 8081),
+    #   un descripteur « team » (expression apiKey.group, unit Requests) et un descripteur « user_id » (apiKey.user_id, unit Tokens).
+    #   failureMode : que doit faire la gateway si le service de comptage est injoignable ?
+  frontend:
+    # TODO section 5 — metrics.attributes.add : une étiquette « team » sur toutes les métriques (expression apiKey.group)
+    # TODO section 5 — accessLog.attributes.add : « team » et « cle » sur chaque ligne de journal

@@ -2,14 +2,15 @@ package com.sciam.formation.eval;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * PLOMBIER FOURNI — à ne pas modifier.
- * Charge le projet serveur généré (OpenCode + Skill) pour l'inspecter.
- * Chemin via -Dserveur.genere.dir=... (défaut : ../serveur-genere).
+ * FOURNI — le serveur généré, vu comme du texte.
+ * Chemin : -Dserveur.genere.dir=/chemin/vers/le/serveur (le dossier qui contient pom.xml).
  */
 public final class GeneratedProject {
 
@@ -18,31 +19,45 @@ public final class GeneratedProject {
     private GeneratedProject(Path racine) { this.racine = racine; }
 
     public static GeneratedProject charger() {
-        Path p = Path.of(System.getProperty("serveur.genere.dir", "../serveur-genere"));
-        if (!Files.isDirectory(p)) {
-            throw new IllegalStateException("Projet généré introuvable : " + p.toAbsolutePath()
-                + " (passez -Dserveur.genere.dir=/chemin/vers/le/serveur)");
+        String dir = System.getProperty("serveur.genere.dir", "");
+        Path p = Path.of(dir.isBlank() ? "." : dir);
+        if (dir.isBlank() || !Files.exists(p.resolve("pom.xml"))) {
+            throw new IllegalStateException("Projet généré introuvable : passez -Dserveur.genere.dir=/chemin/vers/le/serveur (dossier contenant pom.xml)");
         }
         return new GeneratedProject(p);
     }
 
-    /** Concatène tout le code source Java du projet généré. */
-    public String sourceJava() {
-        try (Stream<Path> s = Files.walk(racine)) {
-            StringBuilder sb = new StringBuilder();
-            s.filter(f -> f.toString().endsWith(".java")).forEach(f -> sb.append(lire(f)).append('\n'));
-            return sb.toString();
-        } catch (IOException e) { throw new UncheckedIOException(e); }
-    }
-
+    /** Le pom.xml, tel quel. */
     public String pom() {
-        Path pom = racine.resolve("pom.xml");
-        return Files.exists(pom) ? lire(pom) : "";
+        return lire(racine.resolve("pom.xml"));
     }
 
-    /** true si le code source matche l'expression régulière (multiligne). */
-    public boolean sourceContient(String regex) {
-        return Pattern.compile(regex, Pattern.DOTALL).matcher(sourceJava()).find();
+    /** Toutes les sources de src/main/java, concaténées, commentaires retirés, chaînes préservées.
+     *  Les tests du serveur (src/test) sont volontairement exclus : un scorer y trouverait n'importe quoi. */
+    public String source() {
+        Path main = racine.resolve("src/main/java");
+        if (!Files.isDirectory(main)) return "";
+        try (Stream<Path> s = Files.walk(main)) {
+            StringBuilder sb = new StringBuilder();
+            s.filter(f -> f.toString().endsWith(".java")).sorted().forEach(f -> sb.append(lire(f)).append('\n'));
+            return sansCommentaires(sb.toString());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /** Vrai si source() contient une occurrence de la regex (mode DOTALL : « . » traverse les lignes). */
+    public boolean contient(String regex) {
+        return Pattern.compile(regex, Pattern.DOTALL).matcher(source()).find();
+    }
+
+    /** Retire les commentaires bloc et ligne sans toucher aux chaînes : « service://{name} » contient « // ». */
+    static String sansCommentaires(String src) {
+        Matcher m = Pattern.compile("\"(?:\\\\.|[^\"\\\\])*\"|/\\*.*?\\*/|//[^\\n]*", Pattern.DOTALL).matcher(src);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) m.appendReplacement(sb, Matcher.quoteReplacement(m.group().startsWith("\"") ? m.group() : " "));
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static String lire(Path f) {

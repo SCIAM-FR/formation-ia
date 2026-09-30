@@ -1,0 +1,176 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Configuration de DÉMONSTRATION agentgateway (poste formateur) — à copier en config.yaml et à adapter.
+# La salle ne voit que les ALIAS (modele-generation, modele-juge, modele-reserve) : le fournisseur réel (OpenCode Zen)
+# et sa clé restent côté gateway. Les clés virtuelles des équipes sont lues dans l'environnement (variables CLE_…), jamais écrites ici.
+# Tout ce que la démo montre (budgets, modèles autorisés, débit, droits MCP) est DANS CE FICHIER : c'est l'argument.
+
+config:
+  adminAddr: 0.0.0.0:15000          # UI et API d'administration sans authentification : publié sur 127.0.0.1 seulement (compose)
+  statsAddr: 0.0.0.0:15020          # métriques Prometheus
+  database:
+    url: sqlite:///data/agentgateway.db   # journal des requêtes (Analytics / Logs) et compteurs de budgets
+  storage:
+    mode: readOnly                  # ce fichier est la seule source de vérité : l'UI lit, elle n'écrit pas
+  modelCatalog:
+  - file: /costs/zen.json           # prix des modèles Zen, en $ par million de tokens : sans catalogue, la dépense vaut 0
+  standardAttributes:               # « qui » dans le journal et le tableau de bord : lus dans les métadonnées de la clé
+    user: apiKey.user
+    group: apiKey.group
+  logging:
+    format: text
+
+gateways:
+  default:
+    port: 4000                      # LLM (/v1/chat/completions, /v1/models…) et MCP (/mcp)
+  ui-gateway:
+    port: 4001                      # interface, protégée par le SSO Keycloak (section « ui »)
+
+ui:
+  gateways: [ui-gateway]
+  policies:
+    # SSO de démonstration. Le navigateur parle à Keycloak sur localhost:8180 ; le conteneur lui parle sur keycloak:8080.
+    # Voir README, « SSO avec Keycloak ». Pour démarrer sans SSO, commenter tout le bloc « policies ».
+    oidc:
+      issuer: http://localhost:8180/realms/formation-ia                                  # = iss des jetons (KC_HOSTNAME)
+      # (pas de « discovery » : agentgateway l'interdit quand les trois points d'accès ci-dessous sont explicites)
+      authorizationEndpoint: http://localhost:8180/realms/formation-ia/protocol/openid-connect/auth   # suivi par le navigateur
+      tokenEndpoint: http://keycloak:8080/realms/formation-ia/protocol/openid-connect/token           # appelé par le conteneur
+      jwks:
+        url: http://keycloak:8080/realms/formation-ia/protocol/openid-connect/certs
+      clientId: agentgateway-ui
+      clientSecret: "$KEYCLOAK_CLIENT_SECRET"
+      redirectURI: http://localhost:4001/oauth/callback
+      scopes:
+      - profile
+      - email
+    authorization:
+      rules:
+      # L'interface est un outil de la platform team : alice (équipe produit A) est authentifiée mais refusée (403).
+      - require: '"platform-team" in jwt.groups'
+
+llm:
+  # Fournisseur : OpenCode Zen (https://opencode.ai/zen), déclaré comme fournisseur « custom » avec ses deux formats d'API.
+  # Zen expose /zen/v1/chat/completions (GLM, MiniMax, DeepSeek…) et /zen/v1/messages (Claude, format Anthropic).
+  # Vérifiés le 27 sept. 2026 : glm-5.3, glm-5.3-flash (chat/completions) ; claude-opus-5-5 (messages). Retester avant la démo.
+  providers:
+  - name: zen-chat
+    provider:
+      custom:
+        formats:
+        - type: completions
+          path: /zen/v1/chat/completions
+    params:
+      baseUrl: https://opencode.ai
+      apiKey: "$OPENCODE_API_KEY"
+  - name: zen-messages
+    provider:
+      custom:
+        formats:
+        - type: messages
+          path: /zen/v1/messages
+    params:
+      baseUrl: https://opencode.ai
+      apiKey: "$OPENCODE_API_KEY"
+
+  models:
+  - name: modele-generation          # alias vu par OpenCode — un modèle Zen de la démo, pas forcément celui des TP
+    provider:
+      reference: zen-chat
+    params:
+      model: glm-5.3
+  - name: modele-juge                # alias utilisé par tp3-eval (LLM_MODEL) — bon marché, suffisant pour une grille
+    provider:
+      reference: zen-chat
+    params:
+      model: glm-5.3-flash
+  - name: modele-reserve             # le plus cher, réservé à platform-team : sert à montrer un refus 403
+    provider:
+      reference: zen-messages
+    params:
+      model: claude-opus-5-5
+
+  policies:
+    # Clés virtuelles : une par équipe. « name » identifie la clé dans les budgets et le journal ; « group » alimente
+    # le tableau de bord (Group by) et les limites de débit ; « allowedModels » filtre aussi /v1/models.
+    apiKey:
+      mode: strict
+      keys:
+      - key: "$CLE_PLATFORM"
+        metadata: { name: platform-team, user: platform-team, group: platform-team }
+        allowedModels: ["*"]
+        budgets:
+        - name: mensuel
+          limit: { unit: USD, amount: 20 }
+          window: { rolling: 30d }
+          onBudgetExceeded: Block
+      - key: "$CLE_PRODUIT_A"
+        metadata: { name: equipe-produit-a, user: equipe-produit-a, group: equipe-produit-a }
+        allowedModels: [modele-generation, modele-juge]
+        budgets:
+        - name: mensuel
+          limit: { unit: USD, amount: 5 }
+          window: { rolling: 30d }
+          onBudgetExceeded: Block
+      - key: "$CLE_PRODUIT_B"
+        metadata: { name: equipe-produit-b, user: equipe-produit-b, group: equipe-produit-b }
+        allowedModels: [modele-generation, modele-juge]
+        budgets:
+        - name: mensuel
+          limit: { unit: USD, amount: 5 }
+          window: { rolling: 30d }
+          onBudgetExceeded: Block
+      - key: "$CLE_CI"
+        metadata: { name: ci-usine, user: ci-usine, group: ci-usine }
+        allowedModels: [modele-generation, modele-juge]
+        budgets:
+        - name: mensuel
+          limit: { unit: USD, amount: 10 }
+          window: { rolling: 30d }
+          onBudgetExceeded: Block
+      # Clé au budget dérisoire (un millionième de dollar) : un premier appel passe (le budget est débité APRÈS la réponse),
+      # le suivant est refusé 429 budget_exceeded. Le script preparer-demo.sh fait ce premier appel pour vous.
+      - key: "$CLE_DEMO"
+        metadata: { name: demo-budget-epuise, user: demo-budget-epuise, group: demo }
+        allowedModels: [modele-juge]
+        budgets:
+        - name: minuscule
+          limit: { unit: USD, amount: 0.000001 }
+          window: { rolling: 24h }
+          onBudgetExceeded: Block
+
+    # Limite de débit PAR ÉQUIPE : les compteurs vivent dans le service « ratelimit » (Envoy) + Redis du compose ;
+    # les seuils sont dans ratelimit-config/formation-ia.yaml (30 req/min pour les équipes produit, 60 sinon).
+    # Un localRateLimit serait plus simple mais compte pour TOUTE la gateway, pas par clé.
+    remoteRateLimit:
+      host: ratelimit:8081
+      domain: formation-ia
+      failureMode: failClosed       # service de comptage indisponible = pas de trafic non compté (500)
+      descriptors:
+      - entries:
+        - key: team
+          value: apiKey.group
+        type: requests
+
+# Dernière étape de la démo — le serveur MCP du fil rouge derrière la gateway (même port 4000, chemin /mcp).
+# Le serveur Quarkus (mvn quarkus:dev sur le poste) est vu depuis le conteneur sous host.docker.internal :
+# relever le point d'accès réel exposé par le serveur généré (souvent http://localhost:8080/mcp).
+mcp:
+  prefixMode: always                # outils exposés « catalogue_find_service », etc. : la gateway range plusieurs serveurs
+  targets:
+  - name: catalogue
+    mcp:
+      host: http://host.docker.internal:8080/mcp
+  policies:
+    apiKey:
+      mode: strict
+      keys:
+      - key: "$CLE_PLATFORM"
+        metadata: { name: platform-team, user: platform-team, group: platform-team }
+      - key: "$CLE_PRODUIT_A"
+        metadata: { name: equipe-produit-a, user: equipe-produit-a, group: equipe-produit-a }
+      - key: "$CLE_PRODUIT_B"
+        metadata: { name: equipe-produit-b, user: equipe-produit-b, group: equipe-produit-b }
+    # Seule platform-team voit et appelle les outils du serveur « catalogue » ; pour les autres, tools/list revient vide.
+    mcpAuthorization:
+      rules:
+      - 'mcp.tool.target == "catalogue" && apiKey.group == "platform-team"'

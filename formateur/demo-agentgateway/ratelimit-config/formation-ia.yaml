@@ -1,0 +1,24 @@
+# Seuils de débit par équipe, appliqués par le service Envoy « ratelimit » (compose) sur le descripteur « team »
+# que la gateway envoie (valeur : apiKey.group). Le « domain » doit être celui de config.yaml (remoteRateLimit.domain).
+domain: formation-ia
+descriptors:
+  - key: team
+    value: equipe-produit-a
+    rate_limit:
+      unit: minute
+      requests_per_unit: 30
+  - key: team
+    value: equipe-produit-b
+    rate_limit:
+      unit: minute
+      requests_per_unit: 30
+  - key: team
+    value: ci-usine
+    rate_limit:
+      unit: minute
+      requests_per_unit: 20
+  # Toute autre équipe (platform-team, demo) : 60 requêtes par minute
+  - key: team
+    rate_limit:
+      unit: minute
+      requests_per_unit: 60

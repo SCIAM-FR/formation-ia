@@ -1,0 +1,58 @@
+# Fournisseur d'identité de DÉMONSTRATION : Keycloak en mode dev, realm importé depuis la ConfigMap « keycloak-realm »
+# (créée par scripts/installer.sh à partir de keycloak/realm-formation-ia.json). Utilisateurs formateur / alice / bob,
+# groupes = équipes. Joignable depuis le poste sur http://localhost:8180 (NodePort 30180 publié par kind).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels: { app: keycloak }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: keycloak } }
+  template:
+    metadata: { labels: { app: keycloak } }
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.3   # figer la version testée
+          args: ["start-dev", "--import-realm"]
+          env:
+            - { name: KC_BOOTSTRAP_ADMIN_USERNAME, value: admin }
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: keycloak-admin, key: password } }
+            - { name: KC_HTTP_ENABLED, value: "true" }
+            # Émetteur (iss) des jetons figé sur l'URL vue du poste : c'est la valeur « issuer » des politiques JWT.
+            - { name: KC_HOSTNAME, value: "http://localhost:8180" }
+            - { name: KC_HOSTNAME_STRICT, value: "false" }
+            - { name: KC_HEALTH_ENABLED, value: "true" }
+          ports:
+            - { name: http, containerPort: 8080 }
+            - { name: management, containerPort: 9000 }
+          readinessProbe:
+            httpGet: { path: /health/ready, port: 9000 }
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 30
+          volumeMounts:
+            - { name: realm, mountPath: /opt/keycloak/data/import, readOnly: true }
+      volumes:
+        - name: realm
+          configMap: { name: keycloak-realm }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels: { app: keycloak }
+spec:
+  type: NodePort
+  selector: { app: keycloak }
+  ports:
+    - { name: http, port: 8080, targetPort: 8080, nodePort: 30180 }

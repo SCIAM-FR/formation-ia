@@ -1,56 +1,32 @@
 # TP3 — Évaluer le Skill `create-quarkus-mcp-server`
 
-**[Guide détaillé sur GitHub Pages](https://sciam-fr.github.io/formation-ia/tp3/)**
-· [Source du guide](../docs/tp3.md)
+**[Guide pas à pas](https://sciam-fr.github.io/formation-ia/tp3/)** · [Source](../docs/tp3.md)
 
-Harnais d'éval 100 % Java. **Le squelette fournit la plomberie ; vous écrivez ce qui porte
-du jugement** : les assertions de conformité et la grille du juge.
+Harnais d'éval JUnit, quatre fichiers. La plomberie est fournie ; **vous écrivez les scorers** :
+quatre assertions déterministes et la rubric du LLM-as-a-judge. Durée : 2 h.
 
-## Deux parcours
-
-| Parcours | Sections du guide | Preuve de sortie |
-| --- | --- | --- |
-| **Essentiel — 2 h cible** | 1 à 6 ; 7 si raisonnable | Quatre stubs complétés, exemple examiné, une mutation rouge puis corrigée verte, grille écrite et premier verdict LLM calibré avec lecture humaine sur la génération TP2 |
-| **Approfondissement** | 3, 4 et 7 | Couverture élargie, mutations supplémentaires, dataset complet et répétitions |
-
-Une demande adverse par binôme est mutualisée si le temps de génération le permet ;
-sinon, notez « non exécuté ». Distinguez cette sortie du serveur issu du TP2 :
-évaluer ce dernier ne signifie pas avoir exécuté un cas du dataset.
-Les approfondissements sont hors des 14 h ou si avance, sans supprimer l'essentiel.
-Le fournisseur du juge doit être préparé avant séance pour le parcours complet.
-
-## Fourni (ne pas réécrire)
-- `GeneratedProject` — lit le POM et les sources du serveur généré.
-- `CasAttendu` — lit le cas du dataset désigné par `-Dcas=<id>` et son `attendu`.
-- `ContratDemandeTest` — **le contrat de la demande** (noms de tools, resource,
-  prompt attendus par le cas) ; ignoré sans `-Dcas`.
-- `JugeLLM` — client LLM-as-a-Judge agnostique (endpoint/clé/modèle via env).
-- `ConformiteDeterministeTest` — **les conventions du Skill** : un scorer exemple
-  + quatre stubs `@Test` à compléter, sans citer de nom du catalogue.
-- `ConformiteJugeTest` — l'appel au juge est câblé ; **la grille est à écrire**.
-- `dataset/` — cas happy / realistic / adverse, chacun avec un `attendu` structuré
-  (`contrat` + `conventions` + `commentaire`).
-
-## À écrire (vous)
-- Les quatre stubs de conventions (`// TODO`) : snake_case des tools, descriptions,
-  resource paramétrée, séparation métier/adaptateur. Ne désactivez aucun test ;
-  examinez aussi le scorer exemple et le contrat fourni.
-- La grille (rubric) du LLM-as-a-Judge.
+| Fichier | Statut |
+| --- | --- |
+| `GeneratedProject` | fourni : `pom()`, `source()` (src/main sans commentaires), `contient(regex)` |
+| `ConformiteTest` | **à écrire** : deux exemples fournis, quatre stubs |
+| `JugeTest` | **à écrire** : la rubric ; seuil 7/10 ; skipped sans `LLM_ENDPOINT` |
+| `JugeLLM` | fourni : client Chat Completions (`LLM_ENDPOINT`, `LLM_API_KEY`, `LLM_MODEL`) |
 
 ## Lancer
-    export LLM_ENDPOINT=...  LLM_API_KEY=...  LLM_MODEL=...
-    mvn -Dcas=happy-1 -Dserveur.genere.dir=/chemin/vers/le/serveur/genere test
 
-`-Dcas` sélectionne le contrat attendu (celui de la demande jouée) ; sans lui, seules
-les conventions et le juge s'exécutent.
+```bash
+export SERVEUR="$ATELIER_DIR/serveur-avec-skill"
+mvn -q -Dtest=ConformiteTest -Dserveur.genere.dir="$SERVEUR" test     # sans juge
+export LLM_ENDPOINT=... LLM_MODEL=... LLM_API_KEY=...
+mvn -q -Dserveur.genere.dir="$SERVEUR" test                           # avec juge
+```
 
-Le juge (`ConformiteJugeTest`) ne s'active que si `LLM_ENDPOINT` est défini.
-Sans juge exécuté et calibré, le TP est **partiel et non validé**.
-Le harnais **ne génère, ne compile ni ne démarre** le serveur et **ne boucle pas**
-automatiquement sur le dataset. Vérifiez séparément build, démarrage et appels MCP ;
-archivez les résultats en indiquant la provenance exacte du projet évalué.
+Le harnais ne génère, ne compile et ne démarre pas le serveur. Rapports : `target/surefire-reports/`.
 
-## L'idée
-En TP2 vous avez écrit la conformité *en prose* (le Skill). Ici vous l'écrivez *en
-assertions exécutables*. Prose → test : c'est ce qui rend le Skill vérifiable, donc
-gouvernable (TP4). **On délègue la création, on garde la vérification.**
+## Étapes
+1. Lancer tel quel : deux exemples verts, quatre stubs rouges.
+2. Écrire les assertions : tout vert sur le serveur du TP2.
+3. Mutation : une copie, `findService` en camelCase, rouge, correction, vert.
+4. Rubric et juge : verdict LLM comparé à votre propre note.
+
+Corrigé formateur : `formateur/corrige-assertions/`.

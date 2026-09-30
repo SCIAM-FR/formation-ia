@@ -1,0 +1,37 @@
+# SQUELETTE section 8 — votre serveur MCP du TP2 derrière la gateway, protégé par un jeton Keycloak.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayBackend
+metadata:
+  name: catalogue
+  namespace: agentgateway-system
+spec:
+  mcp:
+    targets:
+      - name: catalogue
+        static:
+          host: host.docker.internal      # votre poste, vu depuis kind
+          port: REMPLACER                 # TODO — le port de votre serveur Quarkus (mvn quarkus:dev)
+          path: /mcp                      # TODO — le point d'accès réel exposé par votre serveur
+          protocol: StreamableHTTP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mcp
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { name: agentgateway-proxy, namespace: agentgateway-system, sectionName: mcp }
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /mcp }
+      backendRefs:
+        - { group: agentgateway.dev, kind: AgentgatewayBackend, name: catalogue }
+---
+# TODO section 8 — AgentgatewayPolicy « mcp-jeton-keycloak » ciblant l'HTTPRoute mcp :
+#   traffic.jwtAuthentication Strict, issuer http://localhost:8180/realms/formation-ia, audiences [formation-ia-mcp],
+#   jwks.remote.backendRef vers le Service keycloak (namespace keycloak, port 8080), jwksPath /realms/formation-ia/protocol/openid-connect/certs
+#   traffic.authorization : Require has(jwt.groups)
+---
+# TODO section 8 — AgentgatewayPolicy « mcp-outils-platform-team » ciblant l'AgentgatewayBackend catalogue :
+#   backend.mcp.authorization : Allow si jwt.groups contient platform-team

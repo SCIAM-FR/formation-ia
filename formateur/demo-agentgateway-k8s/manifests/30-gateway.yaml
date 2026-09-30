@@ -1,0 +1,53 @@
+# La gateway : paramètres du proxy (catalogue de prix, base SQLite du tableau de bord, exposition NodePort),
+# puis la Gateway elle-même avec deux écouteurs : « llm » (modèles, chemins /v1/…) et « mcp » (HTTPRoute /mcp).
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayParameters
+metadata:
+  name: formation-ia
+  namespace: agentgateway-system
+spec:
+  modelCatalog:
+    sources:
+      - configMap: { name: catalogue-prix-zen, key: zen.json }   # ConfigMap créée par scripts/installer.sh depuis costs/zen.json
+  rawConfig:
+    config:
+      database:
+        url: "sqlite:////tmp/agentgateway.db?mode=rwc"   # tableau de bord Analytics / Logs de l'UI ; éphémère (perdu au redémarrage du pod)
+      standardAttributes:
+        user: apiKey.user_id
+        group: apiKey.group
+  service:
+    spec:
+      type: NodePort
+      ports:
+        - name: llm
+          port: 80
+          nodePort: 30080     # publié par kind sur localhost:4000
+        - name: mcp
+          port: 3000
+          nodePort: 30081     # publié par kind sur localhost:4001
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: agentgateway-proxy
+  namespace: agentgateway-system
+spec:
+  gatewayClassName: agentgateway
+  infrastructure:
+    parametersRef: { group: agentgateway.dev, kind: AgentgatewayParameters, name: formation-ia }
+  listeners:
+    - name: llm
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces: { from: Same }
+        kinds:
+          - { group: agentgateway.dev, kind: AgentgatewayModel }   # active les chemins LLM intégrés (/v1/chat/completions, /v1/models…)
+    - name: mcp
+      port: 3000
+      protocol: HTTP
+      allowedRoutes:
+        namespaces: { from: Same }
+        kinds:
+          - { group: gateway.networking.k8s.io, kind: HTTPRoute }

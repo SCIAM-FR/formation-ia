@@ -1,0 +1,39 @@
+# Une seule politique pour l'écouteur LLM : deux politiques sur la même cible s'écraseraient en silence.
+#  - traffic.apiKeyAuthentication : clés virtuelles des équipes (ConfigMap « cles-equipes », empreintes SHA-256, créée par le script)
+#  - traffic.rateLimit.global     : requêtes/min par équipe et budget de tokens par clé, comptés par le service ratelimit
+#  - frontend.metrics / accessLog : « qui » sur chaque métrique et chaque ligne de journal
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayPolicy
+metadata:
+  name: llm-cles-et-limites
+  namespace: agentgateway-system
+spec:
+  targetRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  traffic:
+    apiKeyAuthentication:
+      mode: Strict
+      configMapSelector:
+        matchLabels: { formation-ia/cles-virtuelles: "true" }
+    rateLimit:
+      global:
+        domain: formation-ia
+        backendRef: { kind: Service, name: ratelimit, namespace: ratelimit, port: 8081 }
+        failureMode: FailClosed          # service de comptage indisponible = pas de trafic non compté
+        descriptors:
+          - entries:
+              - { name: team, expression: 'apiKey.group' }
+            unit: Requests
+          - entries:
+              - { name: user_id, expression: 'apiKey.user_id' }
+            unit: Tokens
+  frontend:
+    metrics:
+      attributes:
+        add:
+          - { name: team, expression: 'apiKey.group' }
+    accessLog:
+      attributes:
+        add:
+          - { name: team, expression: 'apiKey.group' }
+          - { name: cle, expression: 'apiKey.user_id' }

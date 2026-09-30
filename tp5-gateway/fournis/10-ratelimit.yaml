@@ -1,0 +1,84 @@
+# FOURNI — service de comptage Envoy « ratelimit » + Redis. Vous ne l'écrivez pas ; vous écrivez ses SEUILS (section 6 du guide).
+# agentgateway lui envoie des descripteurs (clé = valeur) ; il répond OK ou OVER_LIMIT et tient les compteurs dans Redis.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ratelimit
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ratelimit-config
+  namespace: ratelimit
+data:
+  config.yaml: |
+    domain: tp5
+    descriptors:
+      # TODO section 6 — remplacer ce seuil unique par un seuil de requêtes par minute PAR ÉQUIPE (clé « team »)
+      # et un budget de TOKENS par jour pour une clé de démonstration (clé « user_id », valeur = nom de la clé).
+      - key: team
+        rate_limit: { unit: minute, requests_per_unit: 1000 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: ratelimit
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: redis } }
+  template:
+    metadata: { labels: { app: redis } }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports: [{ containerPort: 6379 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: ratelimit
+spec:
+  selector: { app: redis }
+  ports: [{ port: 6379 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratelimit
+  namespace: ratelimit
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ratelimit } }
+  template:
+    metadata: { labels: { app: ratelimit } }
+    spec:
+      containers:
+        - name: ratelimit
+          image: envoyproxy/ratelimit:master
+          command: ["/bin/ratelimit"]
+          env:
+            - { name: REDIS_SOCKET_TYPE, value: tcp }
+            - { name: REDIS_URL, value: "redis:6379" }
+            - { name: RUNTIME_ROOT, value: /data }
+            - { name: RUNTIME_SUBDIRECTORY, value: ratelimit }
+            - { name: RUNTIME_WATCH_ROOT, value: "false" }
+            - { name: USE_STATSD, value: "false" }
+            - { name: LOG_LEVEL, value: debug }   # journalise chaque descripteur reçu : votre meilleur outil de diagnostic
+          ports: [{ containerPort: 8081, name: grpc }]
+          volumeMounts:
+            - { name: config, mountPath: /data/ratelimit/config/config.yaml, subPath: config.yaml }
+      volumes:
+        - name: config
+          configMap: { name: ratelimit-config }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ratelimit
+  namespace: ratelimit
+spec:
+  selector: { app: ratelimit }
+  ports: [{ name: grpc, port: 8081, targetPort: 8081 }]

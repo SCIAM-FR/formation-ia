@@ -101,7 +101,7 @@ en premier par la direction : **qui dépense quoi, sur quel modèle, et qui l'a 
 
      ```bash
      LLM_ENDPOINT="$GATEWAY/v1/chat/completions" LLM_MODEL=modele-juge LLM_API_KEY="$CLE_PLATFORM" \
-       mvn -q -f "$FORMATION_REPO/tp3-eval/pom.xml" -Dtest=ConformiteJugeTest \
+       mvn -q -f "$FORMATION_REPO/tp3-eval/pom.xml" -Dtest=JugeTest \
        -Dserveur.genere.dir="$ATELIER_DIR/serveur-avec-skill" test
      ```
 
@@ -331,7 +331,7 @@ echo "clés : ${#CLE_PLATFORM}/${#CLE_PRODUIT}/${#CLE_DEMO} caractères — serv
 ```bash
 # Le juge du TP3 à travers la gateway (code inchangé)
 LLM_ENDPOINT="$GATEWAY/v1/chat/completions" LLM_MODEL=modele-juge LLM_API_KEY="$CLE_PLATFORM" \
-  mvn -q -f "$FORMATION_REPO/tp3-eval/pom.xml" -Dtest=ConformiteJugeTest \
+  mvn -q -f "$FORMATION_REPO/tp3-eval/pom.xml" -Dtest=JugeTest \
   -Dserveur.genere.dir="$SERVEUR_A_JUGER" test
 
 # OpenCode en mode non interactif, à travers la gateway, avec la clé de l'équipe produit A

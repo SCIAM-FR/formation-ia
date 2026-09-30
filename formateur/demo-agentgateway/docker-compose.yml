@@ -1,0 +1,86 @@
+# Gateway LLM + MCP de DÉMONSTRATION (poste formateur, M5) — agentgateway, variante de demo-litellm.
+# Pas de TLS, secrets dans .env, admin sans authentification sur loopback : ne pas réutiliser tel quel chez un client.
+# Avant la séance : cp .env.example .env ; cp config.example.yaml config.yaml ; ./scripts/preparer-demo.sh ; voir README.md.
+services:
+  agentgateway:
+    image: cr.agentgateway.dev/agentgateway:v1.5.0   # figer la version testée (agentgateway --version)
+    # Le conteneur écrit la base SQLite dans ./data : il doit tourner avec votre uid/gid (id -u ; id -g), voir .env
+    user: "${DEMO_UID:-1000}:${DEMO_GID:-1000}"
+    command: ["-f", "/config.yaml"]
+    ports:
+      - "4000:4000"                 # gateway « default » : LLM (/v1/…) et MCP (/mcp)
+      - "4001:4001"                 # gateway « ui-gateway » : interface, protégée par OIDC (Keycloak)
+      - "127.0.0.1:15000:15000"     # admin : UI et API de configuration SANS authentification — loopback du poste uniquement
+      - "127.0.0.1:15020:15020"     # métriques Prometheus
+    volumes:
+      - ./config.yaml:/config.yaml:ro
+      - ./costs:/costs:ro
+      - ./data:/data
+    environment:
+      # Clé OpenCode Zen (fournisseur de modèles), référencée dans config.yaml via $OPENCODE_API_KEY
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY}
+      # Clés virtuelles des équipes, générées par scripts/preparer-demo.sh dans .env, référencées dans config.yaml
+      CLE_PLATFORM: ${CLE_PLATFORM}
+      CLE_PRODUIT_A: ${CLE_PRODUIT_A}
+      CLE_PRODUIT_B: ${CLE_PRODUIT_B}
+      CLE_CI: ${CLE_CI}
+      CLE_DEMO: ${CLE_DEMO}
+      # SSO de l'interface : clé de chiffrement du cookie de session (openssl rand -hex 32) et secret du client Keycloak
+      OIDC_COOKIE_SECRET: ${OIDC_COOKIE_SECRET}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # le serveur MCP Quarkus du fil rouge tourne sur le poste
+    # agentgateway charge les clés de signature Keycloak (jwks) AU DÉMARRAGE et s'arrête s'il n'y arrive pas :
+    # on attend que Keycloak soit prêt, et on relance si un démarrage échoue quand même.
+    restart: unless-stopped
+    depends_on:
+      ratelimit:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+
+  # Limites de débit PAR ÉQUIPE : agentgateway ne compte localement qu'au niveau de la gateway entière ;
+  # les compteurs partagés sont délégués au service Envoy « ratelimit », adossé à Redis.
+  ratelimit:
+    image: envoyproxy/ratelimit:master               # figer un tag ou un digest pour la session
+    depends_on:
+      - redis
+    environment:
+      USE_STATSD: "false"
+      LOG_LEVEL: debug                                # journalise chaque descripteur reçu : pratique pour la démo
+      REDIS_SOCKET_TYPE: tcp
+      REDIS_URL: redis:6379
+      RUNTIME_ROOT: /data
+      RUNTIME_SUBDIRECTORY: ratelimit
+      RUNTIME_WATCH_ROOT: "false"
+    volumes:
+      - ./ratelimit-config:/data/ratelimit/config:ro
+
+  redis:
+    image: redis:7-alpine
+
+  # Fournisseur d'identité de DÉMONSTRATION : même realm que demo-litellm, plus le client « agentgateway-ui ».
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3   # figer la version testée
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - "8180:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HTTP_ENABLED: "true"
+      # Émetteur (iss) des jetons figé sur l'URL vue par le navigateur : c'est la valeur « issuer » de config.yaml.
+      KC_HOSTNAME: http://localhost:8180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
+      # Substitué dans keycloak/realm-formation-ia.json à l'import (${KEYCLOAK_CLIENT_SECRET}) : une seule source, .env
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    healthcheck:
+      # l'image Keycloak n'embarque ni curl ni wget : on interroge /health/ready (port de gestion 9000) en bash pur
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"status\": \"UP\"' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s

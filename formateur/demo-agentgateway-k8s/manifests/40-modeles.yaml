@@ -1,0 +1,60 @@
+# Les trois alias de la démo, un objet AgentgatewayModel chacun (API expérimentale, activée dans le chart par
+# agentgatewayModels.enabled=true). Le nom du modèle demandé par le client = metadata.name ; le nom réel du modèle
+# Zen est réécrit par la transformation « model ». La clé Zen est dans le Secret « zen-secret », jamais ici.
+# Zen expose /zen/v1/chat/completions (GLM…) et /zen/v1/messages (Claude) : baseURL https://opencode.ai/zen/v1 pour les deux.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayModel
+metadata:
+  name: modele-generation          # alias vu par OpenCode — un modèle Zen de la démo, pas forcément celui des TP
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  provider: OpenAI
+  baseURL: https://opencode.ai/zen/v1
+  policies:
+    auth:
+      secretRef: { name: zen-secret }
+    transformations:
+      - field: model
+        expression: '"glm-5.3"'
+---
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayModel
+metadata:
+  name: modele-juge                # alias utilisé par tp3-eval (LLM_MODEL) — bon marché, suffisant pour une grille
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  provider: OpenAI
+  baseURL: https://opencode.ai/zen/v1
+  policies:
+    auth:
+      secretRef: { name: zen-secret }
+    transformations:
+      - field: model
+        expression: '"glm-5.3-flash"'
+---
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayModel
+metadata:
+  name: modele-reserve             # le plus cher, réservé à platform-team : sert à montrer un refus 403
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  provider: Anthropic
+  baseURL: https://opencode.ai/zen/v1
+  policies:
+    auth:
+      secretRef: { name: zen-secret }
+    transformations:
+      - field: model
+        expression: '"claude-opus-5-5"'
+    # Qui peut demander ce modèle : une ligne, lisible en revue. Les autres équipes reçoivent 403.
+    authorization:
+      action: Allow
+      policy:
+        matchExpressions:
+          - 'apiKey.group == "platform-team"'

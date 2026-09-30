@@ -1,0 +1,35 @@
+# SQUELETTE section 2 — la gateway. Complétez les TODO, puis : kubectl apply -f squelettes/30-gateway.yaml
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayParameters
+metadata:
+  name: tp5
+  namespace: agentgateway-system
+spec:
+  # TODO section 5 — modelCatalog : référencer la ConfigMap « catalogue-prix » (clé catalogue.json)
+  # TODO section 5 — rawConfig.config.database : une base SQLite dans /tmp pour les pages Analytics / Logs de l'UI
+  service:
+    spec:
+      type: NodePort
+      ports:
+        - { name: llm, port: 80,   nodePort: 30080 }   # publié par kind sur localhost:4000
+        - { name: mcp, port: 3000, nodePort: 30081 }   # publié par kind sur localhost:4001
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: agentgateway-proxy
+  namespace: agentgateway-system
+spec:
+  gatewayClassName: agentgateway
+  infrastructure:
+    parametersRef: { group: agentgateway.dev, kind: AgentgatewayParameters, name: tp5 }
+  listeners:
+    - name: llm
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces: { from: Same }
+        kinds:
+          # TODO section 2 — quel « kind » faut-il autoriser ici pour que l'écouteur serve /v1/chat/completions et /v1/models ?
+          - { group: agentgateway.dev, kind: REMPLACER }
+    # TODO section 8 — un second écouteur « mcp » sur le port 3000, qui accepte des HTTPRoute

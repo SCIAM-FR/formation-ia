@@ -5,22 +5,20 @@ description: >-
   À utiliser dès qu'on demande de créer un serveur MCP en Java/Quarkus.
 ---
 
-# TODO — à compléter en TP2
+# Version
 
-> Ne gardez que le *delta* : ce que le modèle échoue à faire seul. Supprimez tout ce qu'il
-> sait déjà produire correctement.
+Utilise la version https://github.com/quarkiverse/quarkus-mcp-server/releases/tag/2.0.1 , > JDK 25
 
 ## Structure imposée
-<!-- Séparation métier / adaptateur MCP. Packages. Chargement des données. -->
+package : org.sebi
+
 
 ## Extension & transport
-<!-- io.quarkiverse.mcp:quarkus-mcp-server-http ; stdio en option. -->
+Toujours http jamais stdio
 
 ## Primitives & annotations
-<!-- Tools snake_case + @Tool(description)/@ToolArg ; @ResourceTemplate("service://{name}") ; @Prompt. -->
-
-## Checklist de conformité (le serveur généré DOIT…)
-<!-- - [ ] … -->
+A tool description is required for each @Tool and each @ToolArg.
+It must always return a ToolResponse. 
 
 ## Référence
-Voir `references/conventions-quarkus-mcp.md`.
+https://docs.quarkiverse.io/quarkus-mcp-server/dev/

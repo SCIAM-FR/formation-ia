@@ -78,7 +78,7 @@ compte est leur forme : à chaque ligne, quelque chose qu'on peut vérifier.
 | # | Ligne | Réponse |
 | --- | --- | --- |
 | 7 | **Distribution** | Dépôt GitLab `platform/skills`, tag `create-quarkus-mcp-server/v1.0.0`, entrée du catalogue interne avec le lien du guide. Les équipes installent la version taguée dans `.opencode/skills/`, jamais `main`. |
-| 8 | **Retrait** | Test de suppression à chaque nouveau modèle de génération : rejouer les cinq cas du dataset sans la règle candidate ; si assertions et juge restent verts sur trois générations, la règle est retirée par MR. Le Skill entier est retiré quand il ne contient plus que des rappels que le modèle respecte seul. Décision : la responsable, preuves jointes à la MR. |
+| 8 | **Retrait** | Test de suppression à chaque nouveau modèle de génération : rejouer trois générations sans la règle candidate ; si assertions et juge restent verts sur trois générations, la règle est retirée par MR. Le Skill entier est retiré quand il ne contient plus que des rappels que le modèle respecte seul. Décision : la responsable, preuves jointes à la MR. |
 
 **Et maintenant**
 

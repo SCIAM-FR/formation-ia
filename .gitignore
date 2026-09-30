@@ -21,3 +21,16 @@ formateur/demo-litellm/.env
 formateur/demo-litellm/litellm-config.yaml
 formateur/demo-litellm/cles-demo.txt
 formateur/demo-litellm/keycloak/*.local.json
+# Démo agentgateway (formateur) — secrets, configuration réelle, base SQLite
+formateur/demo-agentgateway/.env
+formateur/demo-agentgateway/config.yaml
+formateur/demo-agentgateway/cles-demo.txt
+formateur/demo-agentgateway/data/
+# Démo agentgateway sur kind (formateur) — secrets et clés distribuées
+formateur/demo-agentgateway-k8s/.env
+formateur/demo-agentgateway-k8s/cles-demo.txt
+# TP5 (participants) — secrets et clés générées
+tp5-gateway/.env
+tp5-gateway/cles.txt
+tp5-gateway/cles-equipes.yaml
+tp5-gateway/costs/catalogue.json

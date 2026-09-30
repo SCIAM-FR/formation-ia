@@ -1,0 +1,23 @@
+# SQUELETTE sections 2 et 4 — les alias de modèles. Un objet AgentgatewayModel par alias.
+# Le nom demandé par le client est metadata.name ; le nom réel du modèle est réécrit par la transformation « model ».
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayModel
+metadata:
+  name: modele-generation
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: agentgateway-proxy, sectionName: llm }
+  provider: OpenAI                          # fournisseur compatible Chat Completions
+  baseURL: https://REMPLACER/v1             # TODO section 2 — l'URL de base du fournisseur retenu pour la formation
+  policies:
+    auth:
+      secretRef: { name: fournisseur-secret }   # créé par scripts/socle.sh depuis .env, jamais écrit ici
+    transformations:
+      - field: model
+        expression: '"REMPLACER-modele-reel"'   # TODO section 2 — le modèle réel derrière l'alias
+---
+# TODO section 2 — un second alias « modele-juge », moins cher, pour le harnais du TP3
+---
+# TODO section 4 — un alias « modele-reserve » que seule l'équipe platform-team peut demander :
+#   policies.authorization : action Allow, matchExpressions sur apiKey.group

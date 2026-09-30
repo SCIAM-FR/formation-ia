@@ -1,0 +1,75 @@
+# Le serveur MCP du fil rouge (mvn quarkus:dev sur le poste, port 8080) derrière la gateway, écouteur « mcp » (localhost:4001/mcp).
+# Depuis kind (Docker Desktop), le poste s'appelle host.docker.internal.
+# Identité : un jeton Keycloak (SSO) plutôt qu'une clé virtuelle ; les outils ne sont visibles que pour le groupe platform-team.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayBackend
+metadata:
+  name: catalogue
+  namespace: agentgateway-system
+spec:
+  mcp:
+    targets:
+      - name: catalogue
+        static:
+          host: host.docker.internal
+          port: 8080
+          path: /mcp                  # relever le point d'accès réel exposé par le serveur généré
+          protocol: StreamableHTTP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mcp
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+    - { name: agentgateway-proxy, namespace: agentgateway-system, sectionName: mcp }
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /mcp }
+      backendRefs:
+        - { group: agentgateway.dev, kind: AgentgatewayBackend, name: catalogue }
+---
+# Authentification : jeton Keycloak validé contre les clés du realm (JWKS lu dans le cluster, iss = URL vue du poste).
+# Autorisation d'entrée : tout utilisateur du realm ayant au moins un groupe.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayPolicy
+metadata:
+  name: mcp-jeton-keycloak
+  namespace: agentgateway-system
+spec:
+  targetRefs:
+    - { group: gateway.networking.k8s.io, kind: HTTPRoute, name: mcp }
+  traffic:
+    jwtAuthentication:
+      mode: Strict
+      providers:
+        - issuer: http://localhost:8180/realms/formation-ia
+          audiences: [formation-ia-mcp]
+          jwks:
+            remote:
+              backendRef: { group: "", kind: Service, name: keycloak, namespace: keycloak, port: 8080 }
+              jwksPath: /realms/formation-ia/protocol/openid-connect/certs
+              cacheDuration: 5m
+    authorization:
+      action: Require
+      policy:
+        matchExpressions:
+          - 'has(jwt.groups)'
+---
+# Qui voit et appelle les outils du serveur « catalogue » : seul platform-team. Pour alice, tools/list revient vide.
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayPolicy
+metadata:
+  name: mcp-outils-platform-team
+  namespace: agentgateway-system
+spec:
+  targetRefs:
+    - { group: agentgateway.dev, kind: AgentgatewayBackend, name: catalogue }
+  backend:
+    mcp:
+      authorization:
+        action: Allow
+        policy:
+          matchExpressions:
+            - 'jwt.groups.exists(g, g == "platform-team")'

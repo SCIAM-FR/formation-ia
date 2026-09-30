@@ -31,7 +31,7 @@ propriétaires demandent GitHub Team ou Enterprise, et les propriétaires doiven
 | --- | --- | --- |
 | **Préparation formateur — avant séance, hors 14 h** | 1, 3 et 4 : dépôt, runner, environnement OpenCode, modèle, fournisseur du juge et secrets autorisés prévalidés | Workflow de PR réellement générateur et évaluateur dans un contexte de confiance ; infrastructure prête pour les versions des participants |
 | **Essentiel — 1 h 30 cible** | 1 à 6 : import des travaux, protections, inspection du workflow et des secrets préparés, permissions et PR ; 7 : définir le protocole de suppression | `main` protégé, revue Code Owners selon l'offre, vraie génération depuis la PR avec évaluation, blocage rouge puis retour vert, chargement Skill allow/deny observé |
-| **Approfondissement — hors 14 h ou si avance** | 3 et 4 : installation CI depuis zéro / parcours autonome ; 3 : dataset multi-cas ; 6 : diagnostics supplémentaires ; 7 : test de suppression répété | Chaîne autonome éprouvée, résultats par cas, comparaison répétée avec/sans instruction |
+| **Approfondissement — hors 14 h ou si avance** | 3 et 4 : installation CI depuis zéro / parcours autonome ; 3 : plusieurs générations ; 6 : diagnostics supplémentaires ; 7 : test de suppression répété | Chaîne autonome éprouvée, résultats par cas, comparaison répétée avec/sans instruction |
 
 Les participants **configurent et prouvent les protections et la revue** ; la
 préparation du runner ne fait pas cet exercice à leur place. Si l'infrastructure
@@ -163,15 +163,11 @@ cp tp2-skill/references/conventions-quarkus-mcp.md \
 )
 test -f serveur-genere/pom.xml
 mvn -B -f serveur-genere/pom.xml test
-mvn -B -f tp3-eval/pom.xml \
-  -Dcas=happy-1 -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
+mvn -B -f tp3-eval/pom.xml -Dserveur.genere.dir="$GITHUB_WORKSPACE/serveur-genere" test
 ```
 
-`-Dcas=happy-1` charge le **contrat attendu** du cas `happy-1` : les noms de tools,
-la resource et le prompt que la demande impose. Le prompt de génération ci-dessus
-est précisément cette demande ; si vous changez le prompt de la CI, changez le cas,
-ou le harnais vérifiera un contrat qui n'a pas été demandé. Sans `-Dcas`, seules
-les conventions du Skill et le juge s'exécutent.
+Le harnais vérifie les conventions du Skill, les noms de tools demandés dans ce prompt
+et, si les variables du juge sont présentes, la note du LLM-as-a-judge.
 
 Cet extrait illustre la génération, le build et l'appel au harnais : il ne constitue
 pas un job complet et ne vérifie pas le démarrage ni les appels MCP. Le formateur
@@ -193,11 +189,9 @@ Le modèle peut ne pas charger le Skill malgré le prompt : conservez les traces
 de génération et vérifiez ce chargement. Ne remplacez pas cette étape par un serveur
 préfabriqué ou mis en cache : le workflow doit évaluer **la modification proposée**.
 Une génération réellement issue de la PR **par exécution du workflow** suffit
-au parcours essentiel : relevez son prompt et sa provenance sans la confondre
-avec un cas du dataset.
-**En approfondissement**, pour couvrir tous les scénarios du TP3, étendez le job
-à un répertoire de génération distinct par cas ; le harnais ne boucle pas
-automatiquement sur le dataset.
+au parcours essentiel : relevez son prompt et sa provenance.
+**En approfondissement**, étendez le job à plusieurs générations indépendantes, un
+répertoire par génération, pour mesurer la stabilité du Skill.
 
 Le code de sortie d'OpenCode seul ne suffit pas. Les étapes Maven doivent bloquer
 le job en cas d'échec : pas de `|| true`, pas de `continue-on-error: true` pour le

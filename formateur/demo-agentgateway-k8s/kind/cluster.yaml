@@ -1,0 +1,20 @@
+# Cluster kind de DÉMONSTRATION (poste formateur) : un seul nœud, et trois ports du nœud publiés sur le poste
+# pour joindre la gateway et Keycloak sans port-forward.
+#   localhost:4000 -> NodePort 30080 : gateway agentgateway, écouteur LLM (/v1/…)
+#   localhost:4001 -> NodePort 30081 : gateway agentgateway, écouteur MCP (/mcp)
+#   localhost:8180 -> NodePort 30180 : Keycloak
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: formation-ia
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30080
+    hostPort: 4000
+    protocol: TCP
+  - containerPort: 30081
+    hostPort: 4001
+    protocol: TCP
+  - containerPort: 30180
+    hostPort: 8180
+    protocol: TCP

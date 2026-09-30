@@ -6,35 +6,21 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * CORRIGÉ FORMATEUR — une réponse possible aux quatre stubs de CONVENTIONS du TP3.
+ * CORRIGÉ FORMATEUR — une réponse possible aux quatre stubs de ConformiteTest (TP3, étape 2).
  * Réf : domaine/conventions.md. À utiliser au débrief, pas à distribuer avant.
  *
- * Ces assertions ne citent aucun nom du catalogue : elles doivent rester vertes sur un
- * serveur conforme pour n'importe quel domaine. Les noms attendus par la demande sont
- * vérifiés par ContratDemandeTest (fourni, -Dcas=&lt;id&gt;).
- *
- * Choix de conception : retirer les commentaires avant d'appliquer une regex, et
- * raisonner déclaration par déclaration (une annotation et ce qui la suit).
+ * Ces assertions ne citent aucun nom du catalogue : elles restent vertes sur un serveur
+ * conforme de n'importe quel domaine. Choix de conception : raisonner déclaration par
+ * déclaration (une annotation et ce qui la suit) sur GeneratedProject.src, qui ne
+ * contient que src/main/java, sans commentaires.
  */
-class ConformiteDeterministeCorrige {
+class ConformiteCorrige {
 
     private final GeneratedProject projet = GeneratedProject.charger();
+    private final String src = projet.source();
 
-    /** Retire les commentaires sans toucher aux chaînes : « service://{name} » contient « // ». */
-    static String sansCommentaires(String src) {
-        Matcher m = Pattern.compile("\"(?:\\\\.|[^\"\\\\])*\"|/\\*.*?\\*/|//[^\\n]*", Pattern.DOTALL).matcher(src);
-        StringBuilder sb = new StringBuilder();
-        while (m.find()) m.appendReplacement(sb, Matcher.quoteReplacement(m.group().startsWith("\"") ? m.group() : " "));
-        m.appendTail(sb);
-        return sb.toString();
-    }
     private static final Pattern SNAKE = Pattern.compile("^[a-z][a-z0-9_]*$");
 
-    /** Sources sans commentaires ; les tests du projet cible restent inclus (GeneratedProject
-     *  ne distingue pas src/main de src/test), d'où des assertions qui exigent une annotation. */
-    private String source() {
-        return sansCommentaires(projet.sourceJava());
-    }
 
     /** Une annotation @Tool et la déclaration de méthode qui la suit : (attributs, nom de méthode). */
     private static final Pattern TOOL_DECL = Pattern.compile(
@@ -47,17 +33,10 @@ class ConformiteDeterministeCorrige {
         return name.find() ? name.group(1) : tool.group(2);
     }
 
-    // --- Exemple fourni dans le squelette, conservé --------------------------
-    @Test
-    void utilise_extension_quarkus_mcp() {
-        assertTrue(projet.pom().contains("quarkus-mcp-server"),
-            "Le pom doit déclarer l'extension quarkus-mcp-server");
-    }
-
     // --- Les quatre stubs -----------------------------------------------------
     @Test
     void tools_nommes_en_snake_case() {
-        Matcher m = TOOL_DECL.matcher(source());
+        Matcher m = TOOL_DECL.matcher(src);
         int n = 0;
         while (m.find()) {
             n++;
@@ -71,7 +50,6 @@ class ConformiteDeterministeCorrige {
 
     @Test
     void tools_et_arguments_decrits() {
-        String src = source();
         Matcher tool = Pattern.compile("@Tool\\b(?:\\s*\\(([^)]*)\\))?").matcher(src);
         int n = 0;
         while (tool.find()) {
@@ -91,7 +69,6 @@ class ConformiteDeterministeCorrige {
 
     @Test
     void resource_template_parametree_et_decrite() {
-        String src = source();
         Matcher rt = Pattern.compile("@ResourceTemplate\\s*\\(([^)]*)\\)", Pattern.DOTALL).matcher(src);
         assertTrue(rt.find(), "Convention : au moins une @ResourceTemplate.");
         Matcher uri = Pattern.compile("\\buriTemplate\\s*=\\s*\"([^\"]*)\"").matcher(rt.group(1));
@@ -103,7 +80,6 @@ class ConformiteDeterministeCorrige {
 
     @Test
     void separe_metier_et_adaptateur() {
-        String src = source();
         // L'adaptateur : la ou les classes qui portent des annotations MCP.
         Matcher classe = Pattern.compile("\\bclass\\s+(\\w+)\\b").matcher(src);
         int adaptateurs = 0, metiers = 0;

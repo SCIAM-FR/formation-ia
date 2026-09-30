@@ -8,9 +8,11 @@ qui restent volontairement incomplets.
 | Dossier | Usage | Moment |
 | --- | --- | --- |
 | [`demo-scorer-trompeur/`](demo-scorer-trompeur/) | Un projet « piège » sur lequel un scorer naïf passe au vert alors que le tool n'existe pas, et l'assertion robuste qui le détecte | M4, avant la section 3 du TP3 |
-| [`corrige-assertions/`](corrige-assertions/) | Un corrigé possible des quatre stubs de `ConformiteDeterministeTest`, avec ses limites | Débrief et dépannage du TP3 |
+| [`corrige-assertions/`](corrige-assertions/) | Un corrigé possible des quatre stubs de `ConformiteTest`, avec ses limites | Débrief et dépannage du TP3 |
 | [`m5-trace-fictive/`](m5-trace-fictive/) | Une trace JSONL fictive avec trois incidents et la grille de correction du mini-exercice | M5, ~15 min |
 | [`demo-litellm/`](demo-litellm/) | Une gateway de modèles LiteLLM sur le poste formateur : compose, configuration, script de peuplement et déroulé minuté ; le fil rouge (juge TP3, OpenCode, serveur MCP) passe à travers | M5, ~20 min |
+| [`demo-agentgateway/`](demo-agentgateway/) | La même démonstration avec agentgateway (projet AAIF / Linux Foundation) : gateway déclarative en YAML, clés virtuelles avec budgets en dollars, débit par équipe, catalogue de prix, SSO Keycloak sur l'interface, serveur MCP du fil rouge derrière la même gateway. Une seule des deux variantes par séance | M5, ~20 min |
+| [`demo-agentgateway-k8s/`](demo-agentgateway-k8s/) | La même démonstration en mode Kubernetes : cluster kind dédié, control plane agentgateway et Gateway API, modèles, clés et politiques en objets Kubernetes (`kubectl apply`), débit par équipe via ratelimit + Redis, MCP du fil rouge protégé par un jeton Keycloak. Exécutée de bout en bout le 29 sept. 2026. Sert aussi de **corrigé au TP5** optionnel ([`tp5-gateway/`](../tp5-gateway/)) | M5, ~20 min ; corrigé TP5 |
 
 Le canevas de la fiche de sortie (M7) est publié avec les guides :
 [`docs/fiche-de-sortie.md`](../docs/fiche-de-sortie.md).

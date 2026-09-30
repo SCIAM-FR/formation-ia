@@ -10,9 +10,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 /**
- * PLOMBIER FOURNI — LLM-as-a-Judge, agnostique du fournisseur.
+ * FOURNI — client LLM-as-a-judge, agnostique du fournisseur (API Chat Completions).
  * Config via l'environnement : LLM_ENDPOINT, LLM_API_KEY, LLM_MODEL.
- * Vous n'écrivez PAS ce fichier : vous écrivez la GRILLE (rubric) dans le test.
+ * Vous n'écrivez pas ce fichier : vous écrivez la rubric dans JugeTest.
  */
 public final class JugeLLM {
 
@@ -21,7 +21,7 @@ public final class JugeLLM {
     private static final ObjectMapper M = new ObjectMapper();
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(20)).build();
 
-    /** @param grille la rubrique (CE QUE VOUS ÉCRIVEZ) ; @param artefact la sortie à juger. */
+    /** @param grille la rubric (ce que vous écrivez) ; @param artefact la sortie à juger. */
     public Verdict noter(String grille, String artefact) {
         try {
             String prompt = grille + "\n\n=== ARTEFACT ===\n" + artefact

@@ -13,5 +13,4 @@ evaluer-le-skill:
     # 1. Régénérer un serveur avec le Skill de CETTE merge request (OpenCode headless)
     - echo "TODO atelier : opencode run --skill create-quarkus-mcp-server ... -> ./serveur-genere"
     # 2. Évaluer la sortie avec le harnais de TP3 (bloque la MR si non conforme)
-    #    -Dcas=happy-1 : la demande de génération de cette CI est celle du cas happy-1 (contrat attendu)
-    - cd tp3-eval && mvn -q -Dcas=happy-1 -Dserveur.genere.dir=../serveur-genere test
+    - cd tp3-eval && mvn -q -Dserveur.genere.dir=../serveur-genere test

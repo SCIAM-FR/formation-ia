@@ -29,6 +29,7 @@ téléchargement des dépendances nécessitent, eux, un accès réseau.
 | [TP2 Bonus — Partager]({{ '/tp2-bonus/' | relative_url }}) *(expérimental, hors 14 h)* | Peut-on transmettre l'état d'une session, pas seulement le savoir-faire ? | Un contexte repris par un binôme, trois pistes comparées |
 | [TP3 — Évaluer]({{ '/tp3/' | relative_url }}) | Comment prouver que le Skill aide réellement ? | Des assertions, une grille de juge et des résultats |
 | [TP4 — Gouverner]({{ '/tp4/' | relative_url }}) | Comment faire évoluer ce savoir-faire sans régression ? | Une MR ou une PR, une CI et des règles de revue ; variantes [GitLab]({{ '/tp4-gitlab/' | relative_url }}) et [GitHub]({{ '/tp4-github/' | relative_url }}) |
+| [TP5 — Bâtir la gateway]({{ '/tp5/' | relative_url }}) *(optionnel, 3 h, hors 14 h)* | Qui peut appeler quel modèle et quel outil, à quel prix, et où est-ce écrit ? | Une gateway agentgateway sur kind : alias, clés par équipe, coût, débit, budget, serveur MCP du TP2 sous jeton Keycloak |
 
 Suivez les TP dans cet ordre : chaque livrable sert d'entrée au suivant. Les pages
 précisent les fichiers à ouvrir, les commandes à lancer, les résultats à observer et
@@ -68,8 +69,10 @@ occupent **6 h 30**. Leurs guides identifient le périmètre **essentiel** et le
 preuves nécessaires pour passer à la suite. Les **approfondissements** conservent
 les exercices plus longs : seconde génération individuelle au TP1, répétitions
 de robustesse au TP2 et partage expérimental du contexte de session
-([TP2 Bonus]({{ '/tp2-bonus/' | relative_url }})), dataset complet et mutations supplémentaires au TP3,
-installation CI de zéro et test de suppression répété au TP4.
+([TP2 Bonus]({{ '/tp2-bonus/' | relative_url }})), mutations supplémentaires au TP3,
+installation CI de zéro et test de suppression répété au TP4. Le
+[TP5]({{ '/tp5/' | relative_url }}), construction de la gateway de modèles vue en M5,
+est un atelier complémentaire de 3 h, hors des 14 h.
 
 Ils sont prévus **hors des 14 h**, ou si vous avez de l'avance, **sans supprimer
 les étapes essentielles**. Une régénération nécessaire pour corriger un échec

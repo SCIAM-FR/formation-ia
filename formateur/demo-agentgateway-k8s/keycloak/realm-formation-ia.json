@@ -1,0 +1,123 @@
+{
+  "realm": "formation-ia",
+  "enabled": true,
+  "displayName": "Formation IA — démo SSO",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginTheme": "keycloak",
+  "groups": [
+    {
+      "name": "platform-team"
+    },
+    {
+      "name": "equipe-produit-a"
+    },
+    {
+      "name": "equipe-produit-b"
+    }
+  ],
+  "users": [
+    {
+      "username": "formateur",
+      "enabled": true,
+      "email": "formateur@formation-ia.fr",
+      "emailVerified": true,
+      "firstName": "Formateur",
+      "lastName": "SCIAM",
+      "groups": [
+        "/platform-team"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "formateur",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "alice",
+      "enabled": true,
+      "email": "alice@formation-ia.fr",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Produit A",
+      "groups": [
+        "/equipe-produit-a"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "email": "bob@formation-ia.fr",
+      "emailVerified": true,
+      "firstName": "Bob",
+      "lastName": "Produit B",
+      "groups": [
+        "/equipe-produit-b"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "bob",
+          "temporary": false
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "agentgateway-mcp",
+      "name": "agentgateway — accès MCP par jeton (client public, mot de passe pour la démo)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:*",
+        "http://127.0.0.1:*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "defaultClientScopes": [
+        "profile",
+        "email"
+      ],
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-mcp",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "formation-ia-mcp",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ]
+}

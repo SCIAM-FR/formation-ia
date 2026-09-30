@@ -1,0 +1,18 @@
+{
+  "providers": {
+    "openai": {
+      "models": {
+        "glm-5.3":       { "rates": { "input": "1.40", "output": "4.40" } },
+        "glm-5.3-flash": { "rates": { "input": "0.15", "output": "0.50" } },
+        "modele-generation": { "rates": { "input": "1.40", "output": "4.40" } },
+        "modele-juge":       { "rates": { "input": "0.15", "output": "0.50" } }
+      }
+    },
+    "anthropic": {
+      "models": {
+        "claude-opus-5-5": { "rates": { "input": "4.00", "output": "20.00" } },
+        "modele-reserve":  { "rates": { "input": "4.00", "output": "20.00" } }
+      }
+    }
+  }
+}

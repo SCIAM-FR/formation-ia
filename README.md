@@ -14,6 +14,7 @@ Il sera accessible après activation de GitHub Pages et premier déploiement.
 Les guides sont aussi consultables dans le dépôt :
 [accueil](docs/index.md), [préparation](docs/preparation.md),
 [TP1](docs/tp1.md), [TP2](docs/tp2.md), [TP2 Bonus](docs/TP-2-Bonus.md), [TP3](docs/tp3.md), [TP4](docs/tp4.md) en variantes [GitLab](docs/TP4-GITLAB.md) et [GitHub](docs/TP4-GITHUB.md),
+[TP5 optionnel](docs/tp5.md) (bâtir la gateway agentgateway, dossier [`tp5-gateway/`](tp5-gateway/)),
 [fiche de sortie de l'atelier M7](docs/fiche-de-sortie.md).
 
 ## Supports et références formateur
@@ -46,7 +47,7 @@ Le [programme détaillé](docs/index.md#programme-sur-deux-jours) propose **14 h
 d'enseignement hors pauses**, dont **6 h 30 de TP essentiels** :
 TP1 **1 h 30**, TP2 **1 h 30**, TP3 **2 h**, TP4 **1 h 30**.
 Chaque guide distingue les sections essentielles, leurs preuves de sortie et les
-approfondissements (répétitions, dataset complet, installation CI de zéro, test de
+approfondissements (répétitions, mutations supplémentaires, installation CI de zéro, test de
 suppression répété). Ces derniers sont **hors des 14 h**, ou à faire si vous avez
 de l'avance sans supprimer d'étape essentielle.
 

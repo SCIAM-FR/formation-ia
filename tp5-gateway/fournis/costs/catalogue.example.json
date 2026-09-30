@@ -1,0 +1,10 @@
+{
+  "providers": {
+    "openai": {
+      "models": {
+        "REMPLACER-modele-generation-reel": { "rates": { "input": "0.00", "output": "0.00" } },
+        "REMPLACER-modele-juge-reel":       { "rates": { "input": "0.00", "output": "0.00" } }
+      }
+    }
+  }
+}
