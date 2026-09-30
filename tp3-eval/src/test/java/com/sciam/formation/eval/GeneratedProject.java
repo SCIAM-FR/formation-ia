@@ -46,6 +46,21 @@ public final class GeneratedProject {
         }
     }
 
+    /** Les sources de src/main/java fichier par fichier (nom simple → contenu sans commentaires).
+     *  Pour un juge « System One » : un état JSON nommé plutôt qu'un bloc de texte concaténé. */
+    public java.util.Map<String, String> sources() {
+        Path main = racine.resolve("src/main/java");
+        java.util.Map<String, String> m = new java.util.LinkedHashMap<>();
+        if (!Files.isDirectory(main)) return m;
+        try (Stream<Path> s = Files.walk(main)) {
+            s.filter(f -> f.toString().endsWith(".java")).sorted()
+             .forEach(f -> m.put(f.getFileName().toString(), sansCommentaires(lire(f))));
+            return m;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     /** Vrai si source() contient une occurrence de la regex (mode DOTALL : « . » traverse les lignes). */
     public boolean contient(String regex) {
         return Pattern.compile(regex, Pattern.DOTALL).matcher(source()).find();
